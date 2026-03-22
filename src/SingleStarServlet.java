@@ -44,6 +44,14 @@ public class SingleStarservlet extends HttpServlet {
 
             statement.setString(1, id);
 
+            ResultSet rs = statement.executeQuery();
+
+            JsonArray jsonArray = new JsonArray();
+
+            while (rs.next()) {
+
+            }
+
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
