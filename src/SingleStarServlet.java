@@ -59,6 +59,8 @@ public class SingleStarservlet extends HttpServlet {
 
             request.getServletContext().log("Error:", e);
             request.setStatus(500);
+        } finally {
+            out.close();
         }
     }
 }
