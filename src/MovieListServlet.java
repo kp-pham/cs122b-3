@@ -29,4 +29,27 @@ public class MovieListServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
+        String id = request.getParameter("id");
+
+        request.getServletContext().log("getting top 20 rated movies");
+
+        PrintWriter out = response.getWriter();
+
+        try (Connection conn = dataSource.getConnection()) {
+
+        } catch (Exception e) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            request.getServletContext().log("Error:", e);
+            response.setStatus(500);
+        } finally {
+            out.close();
+        }
+    }
 }
