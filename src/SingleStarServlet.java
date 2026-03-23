@@ -1,5 +1,6 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -34,17 +35,18 @@ public class SingleStarServlet extends HttpServlet {
 
         String id = request.getParameter("id");
 
-        request.getServletContext().log("getting id: " + id);
+        request.getServletContext().log("getting star id: " + id);
 
         PrintWriter out = response.getWriter();
 
         // try-with-resouces implements AutoCloseable interface to automatically close connection
         try (Connection conn = dataSource.getConnection()) {
-
-            // Fix query later
-            // One-to-many relationship between actors and movies
-            String query = "SELECT * FROM stars AS S, stars_in_movies AS SIM, movies AS M" +
-                           "WHERE M.id = SIM.movie_id AND SIM.starId = S.id AND S.id = ?";
+            String query = "SELECT S.id, S.name, S.year, " +
+                           "JSON_ARRAYAGG(JSON_OBJECT('id', M.id, 'title', M.title)) AS movies " +
+                           "FROM stars AS S " +
+                           "INNER JOIN stars_in_movies AS SIM ON S.id = SIM.starId " +
+                           "INNER JOIN movies AS M ON SIM.movieId = M.id " +
+                           "WHERE S.id = ?";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
