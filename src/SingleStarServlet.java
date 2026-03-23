@@ -41,12 +41,13 @@ public class SingleStarServlet extends HttpServlet {
 
         // try-with-resouces implements AutoCloseable interface to automatically close connection
         try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT S.id, S.name, S.year, " +
+            String query = "SELECT S.id, S.name, S.birthYear, " +
                            "JSON_ARRAYAGG(JSON_OBJECT('id', M.id, 'title', M.title)) AS movies " +
                            "FROM stars AS S " +
                            "INNER JOIN stars_in_movies AS SIM ON S.id = SIM.starId " +
                            "INNER JOIN movies AS M ON SIM.movieId = M.id " +
-                           "WHERE S.id = ?";
+                           "WHERE S.id = ? " +
+                           "GROUP BY S.id, S.name, S.birthYear";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
@@ -54,34 +55,21 @@ public class SingleStarServlet extends HttpServlet {
 
             ResultSet rs = statement.executeQuery();
 
-            JsonArray jsonArray = new JsonArray();
+            JsonObject jsonObject = new JsonObject();
 
-            while (rs.next()) {
-                String starId = rs.getString("starId");
-                String starName = rs.getString("name");
-                String starDob = rs.getString("birthYear");
+            if (rs.next()) {
+                jsonObject.addProperty("id", rs.getString("S.id"));
+                jsonObject.addProperty("name", rs.getString("S.name"));
+                jsonObject.addProperty("birthYear", rs.getString("S.birthYear"));
 
-                String movieId = rs.getString("movieId");
-                String movieTitle = rs.getString("title");
-                String movieYear = rs.getString("year");
-                String movieDirector = rs.getString("director");
-
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("star_id", starId);
-                jsonObject.addProperty("star_name", starName);
-                jsonObject.addProperty("star_dob", starDob);
-                jsonObject.addProperty("movie_id", movieId);
-                jsonObject.addProperty("movie_title", movieTitle);
-                jsonObject.addProperty("movie_year", movieYear);
-                jsonObject.addProperty("movie_director", movieDirector);
-
-                jsonArray.add(jsonObject);
+                JsonArray moviesArray = JsonParser.parseString(rs.getString("movies")).getAsJsonArray();
+                jsonObject.add("movies", moviesArray);
             }
 
             rs.close();
             statement.close();
 
-            out.write(jsonArray.toString());
+            out.write(jsonObject.toString());
             response.setStatus(200);
 
         } catch (Exception e) {
