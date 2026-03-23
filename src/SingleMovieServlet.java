@@ -55,10 +55,20 @@ public class SingleMovieServlet extends HttpServlet {
 
             ResultSet rs = statement.executeQuery();
 
-            while (rs.next()) {
+            JsonObject jsonObject = new JsonObject();
 
+            if (rs.next()) {
+                jsonObject.addProperty("id", rs.getString("M.id"));
+                jsonObject.addProperty("title", rs.getString("M.title"));
+                jsonObject.addProperty("year", rs.getString("M.year"));
+                jsonObject.addProperty("director", rs.getString("M.director"));
+
+                JsonArray genresArray = JsonParser.parseString(rs.getString("genres")).getAsJsonArray();
+                jsonObject.add("genres", genresArray);
+
+                JsonArray starsArray = JsonParser.parseString(rs.getString("stars")).getAsJsonArray();
+                jsonObject.add("stars", starsArray);
             }
-
             rs.close();
             statement.close();
 
