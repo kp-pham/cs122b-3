@@ -41,8 +41,8 @@ public class MovieListServlet extends HttpServlet {
 
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
-                           "COALESCE(JSON_ARRAYAGG(G.name), JSON_ARRAY()) AS genres, " +
-                           "COALESCE(JSON_ARRAYAGG(JSON_OBJECT('id', S.id, 'name', S.name)), JSON_ARRAY()) AS stars " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name SEPARATOR ', '), ']') AS genres, " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name)), ']') AS stars " +
                            "FROM movies AS M " +
                            "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
