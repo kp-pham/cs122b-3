@@ -19,6 +19,8 @@ import java.sql.ResultSet;
 public class SingleStarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
+    private DataSource dataSource;
+
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
@@ -39,6 +41,7 @@ public class SingleStarServlet extends HttpServlet {
         // try-with-resouces implements AutoCloseable interface to automatically close connection
         try (Connection conn = dataSource.getConnection()) {
 
+            // Fix query later
             // One-to-many relationship between actors and movies
             String query = "SELECT * FROM stars AS S, stars_in_movies AS SIM, movies AS M" +
                            "WHERE M.id = SIM.movie_id AND SIM.starId = S.id AND S.id = ?";
@@ -76,7 +79,7 @@ public class SingleStarServlet extends HttpServlet {
             rs.close();
             statement.close();
 
-            out.write(jsonarray.toString());
+            out.write(jsonArray.toString());
             response.setStatus(200);
 
         } catch (Exception e) {
@@ -85,7 +88,7 @@ public class SingleStarServlet extends HttpServlet {
             out.write(jsonObject.toString());
 
             request.getServletContext().log("Error:", e);
-            request.setStatus(500);
+            response.setStatus(500);
 
         } finally {
             out.close();

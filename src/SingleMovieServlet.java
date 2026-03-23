@@ -20,6 +20,8 @@ import java.sql.ResultSet;
 public class SingleMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
+    private DataSource dataSource;
+
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
@@ -84,7 +86,7 @@ public class SingleMovieServlet extends HttpServlet {
             out.write(jsonObject.toString());
 
             request.getServletContext().log("Error:", e);
-            request.setStatus(500);
+            response.setStatus(500);
         } finally {
             out.close();
         }
