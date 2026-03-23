@@ -41,7 +41,7 @@ public class SingleStarServlet extends HttpServlet {
 
             // One-to-many relationship between actors and movies
             String query = "SELECT * FROM stars AS S, stars_in_movies AS SIM, movies AS M" +
-                           "WHERE M.id = SIM.movie_id AND SIM.startId = S.id AND S.id = ?";
+                           "WHERE M.id = SIM.movie_id AND SIM.starId = S.id AND S.id = ?";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
