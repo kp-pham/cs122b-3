@@ -40,8 +40,8 @@ public class SingleStarServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
 
             // One-to-many relationship between actors and movies
-            String query = "SELECT * FROM stars AS s, stars_in_movies AS sim, movies AS M" +
-                           "WHERE M.id = SIM.movie_id AND SIM.startId = S.id AND s.id = ?";
+            String query = "SELECT * FROM stars AS S, stars_in_movies AS SIM, movies AS M" +
+                           "WHERE M.id = SIM.movie_id AND SIM.startId = S.id AND S.id = ?";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
