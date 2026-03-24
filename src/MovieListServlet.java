@@ -55,7 +55,8 @@ public class MovieListServlet extends HttpServlet {
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
                            "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
                            "LEFT JOIN stars AS S ON SIM.starId = S.id " +
-                           "GROUP BY M.id, M.title, M.year, M.director, M.rating";
+                           "GROUP BY M.id, M.title, M.year, M.director, M.rating " +
+                           "ORDER BY M.rating DESC";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
