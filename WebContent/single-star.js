@@ -25,7 +25,9 @@ function handleResult(resultData) {
     resultData["movies"].forEach(movie => {
         let row = `
             <tr>
-                <td>${movie["title"]}</td>
+                <td>
+                    <a href="single-movie.html?id=${movie['id']}">${movie["title"]}</a>
+                </td>
                 <td>${movie["year"]}</td>
                 <td>${movie["director"]}</td>
             </tr>
