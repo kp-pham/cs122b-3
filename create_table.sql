@@ -37,6 +37,15 @@ CREATE TABLE genres_in_movies(
     FOREIGN KEY (movieId) REFERENCES movies(id)
 );
 
+CREATE TABLE creditcards(
+    id VARCHAR(20) NOT NULL,
+    firstName VARCHAR(50) NOT NULL,
+    lastName VARCHAR(50) NOT NULL,
+    expiration DATE NOT NULL,
+    PRIMARY KEY (id)
+);
+
+
 CREATE TABLE customers(
     id INTEGER NOT NULL AUTO_INCREMENT,
     firstName VARCHAR(50) NOT NULL,
@@ -57,14 +66,6 @@ CREATE TABLE sales(
     PRIMARY KEY (id),
     FOREIGN KEY (customerId) REFERENCES customers(id),
     FOREIGN KEY (movieId) REFERENCES movies(id)
-);
-
-CREATE TABLE creditcards(
-    id VARCHAR(20) NOT NULL,
-    firstName VARCHAR(50) NOT NULL,
-    lastName VARCHAR(50) NOT NULL,
-    expiration DATE NOT NULL,
-    PRIMARY KEY (id)
 );
 
 CREATE TABLE ratings(
