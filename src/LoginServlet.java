@@ -60,6 +60,8 @@ public class LoginServlet extends HttpServlet {
                 jsonObject.addProperty("message", "Incorrect username or password");
             }
 
+            out.write(jsonObject.toString());
+
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
@@ -67,6 +69,7 @@ public class LoginServlet extends HttpServlet {
 
             request.getServletContext().log("Error:", e);
             response.setStatus(500);
+
         } finally {
             out.close();
         }
