@@ -32,6 +32,12 @@ public class LoginFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
+
+        if (httpRequest.getSession().getAttribute("customer") == null) {
+            httpResponse.sendRedirect("login.html");
+        } else {
+            chain.doFilter(request, response);
+        }
     }
 
     private boolean isUrlAllowedWithoutLogin(String requestURI) {
