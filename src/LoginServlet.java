@@ -38,13 +38,22 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        JsonObject jsonObject = new JsonObject();
+        PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT password FROM customers WHERE email = ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, email);
             ResultSet rs = statement.executeQuery();
+        } catch (Exception e) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            request.getServletContext().log("Error:", e);
+            response.setStatus(500);
+        } finally {
+            out.close();
         }
     }
 }
