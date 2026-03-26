@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
 
             if (rs.next() && password.equals(rs.getString("password"))) {
-                request.getSession().setAttribute("user", new User(email));
+                request.getSession().setAttribute("customer", new Customer(email));
                 jsonObject.addProperty("status", "success");
                 jsonObject.addProperty("message", "success");
 
