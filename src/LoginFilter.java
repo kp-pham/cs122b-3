@@ -30,4 +30,8 @@ public class LoginFilter implements Filter {
 
 
     }
+
+    private boolean isUrlAllowedWithoutLogin(String requestURI) {
+        return allowedURIs.stream().anyMatch(requestURI.toLowerCase()::endsWith);
+    }
 }
