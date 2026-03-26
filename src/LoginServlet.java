@@ -31,4 +31,9 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+    protected void doPost(HttpServletRequest request, HttpServlet response) throws IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+    }
 }
