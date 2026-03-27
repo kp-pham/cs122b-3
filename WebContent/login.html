@@ -15,14 +15,19 @@
             <img id="logo" src="images/brand.png" alt="Fablix logo">
             <p id="name" class="m-0 text-white">Fablix</p>
         </div>
+
         <div id="login" class="w-100 p-4 rounded bg-white">
             <div id="login_error_message" class="alert alert-danger" role="alert"></div>
-            <form id="login_form" method="POST" action="#" class="d-flex flex-column">
-                <label for="email">Email Address</label>
-                <input name="email" type="email" id="email" required>
+            <form id="login_form" method="POST" action="#" class="d-flex flex-column gap-3">
+                <div class="d-flex flex-column">
+                    <label for="email">Email Address</label>
+                    <input name="email" type="email" id="email" required>
+                </div>
 
-                <label for="password">Password</label>
-                <input name="password" type="password" id="password" required>
+                <div class="d-flex flex-column">
+                    <label for="password">Password</label>
+                    <input name="password" type="password" id="password" required>
+                </div>
 
                 <button type="submit">Login</button>
             </form>
