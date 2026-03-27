@@ -39,6 +39,8 @@ public class SearchServlet extends HttpServlet {
         String director = request.getParameter("director").trim();
         String star = request.getParameter("star").trim();
 
+        // Handle when all parameters are null
+
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
@@ -50,6 +52,7 @@ public class SearchServlet extends HttpServlet {
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
                            "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
                            "LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                           "WHERE 1 = 1 " +
                            "GROUP BY M.id, M.title, M.year, M.director, M.rating " +
                            "ORDER BY M.rating DESC"
 
