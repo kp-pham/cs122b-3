@@ -45,13 +45,7 @@ public class SearchServlet extends HttpServlet {
             String query = "SELECT M.id, M.title, M.year, M.director, M.rating, " +
                            "CONCAT('[', GROUP_CONCAT(DISTINCT G.name SEPARATOR ', '), ']') AS genres, " +
                            "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name)), ']') AS stars " +
-                           "FROM ( " +
-                           "    SELECT M.id, M.title, M.year, M.director, R.rating " +
-                           "    FROM movies AS M " +
-                           "    LEFT JOIN ratings R ON M.id = R.movieId " +
-                           "    ORDER BY R.rating DESC " +
-                           "    LIMIT 20" +
-                           ") AS M " +
+                           "FROM movies AS M " +
                            "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
                            "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
