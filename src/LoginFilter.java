@@ -51,5 +51,6 @@ public class LoginFilter implements Filter {
 
         allowedURIs.add(".css");
         allowedURIs.add(".ico");
+        allowedURIs.add(".png");
     }
 }
