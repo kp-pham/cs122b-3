@@ -1,12 +1,10 @@
 let login_form = $("#login_form");
 
-function handleLoginResult(resultDataString) {
-    let resultDataJson = JSON.parse(resultDataString);
-
-    if (resultDataJson["status"] === "success") {
+function handleLoginResult(resultData) {
+    if (resultData["status"] === "success") {
         window.location.replace("index.html");
     } else {
-        $("#login_error_message").text(resultDataJson["message"]);
+        $("#login_error_message").text(resultData["message"]);
     }
 }
 
