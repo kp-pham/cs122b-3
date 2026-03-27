@@ -3,6 +3,12 @@
     width: auto;
 }
 
+#logo {
+    max-height: 120px;
+    width: auto;
+}
+
 #name {
+    font-size: 3rem;
     font-family: Fugaz One, sans-serif;
 }
