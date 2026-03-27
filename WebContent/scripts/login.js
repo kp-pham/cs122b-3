@@ -1,9 +1,13 @@
 let login_form = $("#login_form");
 
-fuction handleLoginResult(resultDataString) {
+function handleLoginResult(resultDataString) {
     let resultDataJson = JSON.parse(resultDataString);
 
-
+    if (resultDataJson["status"] === "success") {
+        window.location.replace("index.html");
+    } else {
+        $("#login_error_message").text(resultDataJson["message"]);
+    }
 }
 
 function submitLoginForm(formSubmitEvent) {
