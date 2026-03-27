@@ -34,10 +34,10 @@ public class SearchServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
-        String title = request.getParameter("title").trim();
-        String year = request.getParameter("year").trim();
-        String director = request.getParameter("director").trim();
-        String star = request.getParameter("star").trim();
+        String title = request.getParameter("title");
+        String year = request.getParameter("year");
+        String director = request.getParameter("director");
+        String star = request.getParameter("star");
 
         // Handle when all parameters are null
 
@@ -54,7 +54,23 @@ public class SearchServlet extends HttpServlet {
                            "LEFT JOIN stars AS S ON SIM.starId = S.id " +
                            "WHERE 1 = 1 " +
                            "GROUP BY M.id, M.title, M.year, M.director, M.rating " +
-                           "ORDER BY M.rating DESC"
+                           "ORDER BY M.rating DESC";
+
+            if (title != null && !title.trim().isEmpty()) {
+
+            }
+
+            if (year != null && !year.trim().isEmpty()) {
+
+            }
+
+            if (director != null && !director.trim().isEmpty()) {
+
+            }
+
+            if (star != null && !star.trim().isEmpty()) {
+
+            }
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
