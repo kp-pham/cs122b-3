@@ -75,22 +75,22 @@ public class SearchServlet extends HttpServlet {
 
             List<Object> params = new ArrayList<>();
 
-            if (title != null && !title.isEmpty()) {
+            if (hasTitle) {
                 query += "AND M.title ILIKE ? ";
                 params.add("%" + trimmedTitle + "%");
             }
 
-            if (year != null && !year.isEmpty()) {
+            if (hasYear) {
                 query += "AND M.year = ? ";
-                params.add(Integer.parseInt(year));
+                params.add(Integer.parseInt(trimmedYear));
             }
 
-            if (director != null && !director.isEmpty()) {
+            if (hasDirector) {
                 query += "AND M.director ILIKE ? ";
                 params.add("%" + trimmedDirector + "%");
             }
 
-            if (star != null && !star.trim().isEmpty()) {
+            if (hasStar) {
                 query += "AND S.name ILIKE ? ";
                 params.add("%" + trimmedStar + "%");
             }
