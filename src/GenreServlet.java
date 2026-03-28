@@ -37,7 +37,20 @@ public class GenreServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
+            String query = "SELECT DISTINCT name FROM genres";
 
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            ResultSet rs = statement.executeQuery();
+
+            JsonArray jsonArray = new JsonArray();
+
+            while (rs.next()) {
+                jsonArray.add(rs.getString("name"));
+            }
+
+            out.write(jsonArray.toString());
+            response.setStatus(200);
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
