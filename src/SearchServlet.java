@@ -45,7 +45,7 @@ public class SearchServlet extends HttpServlet {
         String trimmedStar = (star == null) ? null : star.trim();
 
         boolean hasTitle = (title != null && !title.isEmpty());
-        boolean hasYear = (title != null && !year.isEmpty());
+        boolean hasYear = (year != null && !year.isEmpty());
         boolean hasDirector = (director != null && !director.isEmpty());
         boolean hasStar = (star != null && !star.isEmpty());
 
