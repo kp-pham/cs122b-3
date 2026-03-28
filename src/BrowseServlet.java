@@ -51,7 +51,7 @@ public class BrowseServlet extends HttpServlet {
                     "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
                     "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
                     "LEFT JOIN stars AS S ON SIM.starId = S.id " +
-                    "LEFT JOIN ratings As R ON M.id ";
+                    "LEFT JOIN ratings AS R ON R.movie_id = M.id ";
 
             String parameter = null;
 
