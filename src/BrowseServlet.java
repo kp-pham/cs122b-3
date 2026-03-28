@@ -51,8 +51,10 @@ public class BrowseServlet extends HttpServlet {
 
         if (genre != null) {
             query += "WHERE M.genre = ? ";
+        } else if (!prefix.equals("*")) {
+            query += "WHERE M.title REGEXP '^[^a-z0-9]' ";
         } else {
-            query += "WHERE M.name ILIKE ? ";
+            query += "WHERE M.title ILIKE ? ";
         }
 
         query += "GROUP BY M.id, M.title, M.year, M.director, M.rating";
