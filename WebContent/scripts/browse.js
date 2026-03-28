@@ -17,19 +17,23 @@ function getParameterByName(target) {
 }
 
 function handleResult(resultData) {
-    $('title').text(resultData["name"]);
-    $('h3').text(resultData["name"] + ' (' + (resultData["birthYear"] ?? "N/A") + ')');
+    let movieTable = jQuery("#movie-table-body");
 
-    let movieTable = jQuery("#movie_table_body");
-
-    resultData["movies"].forEach(movie => {
+    resultData.forEach(movie => {
         let row = `
             <tr>
                 <td>
-                    <a href="single-movie.html?id=${movie['id']}">${movie["title"]}</a>
+                    <a href="single-movie.html?id=${movie['id']}">${movie['title']}</a>
                 </td>
-                <td>${movie["year"]}</td>
-                <td>${movie["director"]}</td>
+                <td>${movie['year']}</td>
+                <td>${movie['director']}</td>
+                <td>${movie['genres'].slice(0, 3).join(', ')}</td>
+                <td>
+                    ${movie['stars'].slice(0, 3).map(({id, name}) => {
+            return `<a href="single-star.html?id=${id}">${name}</a>`
+        }).join(', ')}
+                </td>
+                <td>${movie['rating']}</td>
             </tr>
         `;
 

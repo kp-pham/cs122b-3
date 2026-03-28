@@ -43,19 +43,20 @@ public class BrowseServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT M.id, M.title, M.year, M.director, M.rating, " +
+            String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
                     "CONCAT('[', GROUP_CONCAT(DISTINCT G.name SEPARATOR ', '), ']') AS genres, " +
                     "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name)), ']') AS stars " +
                     "FROM movies AS M " +
                     "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
                     "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
                     "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
-                    "LEFT JOIN stars AS S ON SIM.starId = S.id ";
+                    "LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                    "LEFT JOIN ratings As R ON M.id ";
 
             String parameter = null;
 
             if (genre != null) {
-                query += "WHERE M.genre = ? ";
+                query += "WHERE G.name = ? ";
                 parameter = genre;
 
             } else if (!prefix.equals("*")) {
@@ -66,7 +67,7 @@ public class BrowseServlet extends HttpServlet {
                 query += "WHERE M.title REGEXP '^[^a-z0-9]' ";
             }
 
-            query += "GROUP BY M.id, M.title, M.year, M.director, M.rating";
+            query += "GROUP BY M.id, M.title, M.year, M.director, R.rating";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
@@ -85,7 +86,7 @@ public class BrowseServlet extends HttpServlet {
                 jsonObject.addProperty("title", rs.getString("M.title"));
                 jsonObject.addProperty("year", rs.getString("M.year"));
                 jsonObject.addProperty("director", rs.getString("M.director"));
-                jsonObject.addProperty("rating", rs.getString("M.rating"));
+                jsonObject.addProperty("rating", rs.getString("R.rating"));
 
                 JsonArray genresArray = JsonParser.parseString(rs.getString("genres")).getAsJsonArray();
                 jsonObject.add("genres", genresArray);
