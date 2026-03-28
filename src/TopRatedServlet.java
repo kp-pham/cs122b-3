@@ -15,10 +15,9 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
-@WebServlet(name = "MovieListServlet", urlPatterns="/api/")
-public class MovieListServlet extends HttpServlet {
+@WebServlet(name = "TopRatedServlet", urlPatterns="/api/")
+public class TopRatedServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     private DataSource dataSource;
