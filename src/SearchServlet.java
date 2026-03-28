@@ -4,6 +4,8 @@ import com.google.gson.JsonParser;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -81,7 +83,7 @@ public class SearchServlet extends HttpServlet {
 
             if (year != null && !year.isEmpty()) {
                 query += "AND M.year = ? ";
-                params.add("%" + trimmedYear + "%");
+                params.add(Integer.parseInt(year));
             }
 
             if (director != null && !director.isEmpty()) {
