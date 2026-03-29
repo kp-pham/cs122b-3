@@ -44,19 +44,25 @@ public class BrowseServlet extends HttpServlet {
 
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
-                    "CONCAT('[', GROUP_CONCAT(DISTINCT G.name SEPARATOR ', '), ']') AS genres, " +
-                    "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name)), ']') AS stars " +
-                    "FROM movies AS M " +
-                    "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
-                    "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
-                    "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
-                    "LEFT JOIN stars AS S ON SIM.starId = S.id " +
-                    "LEFT JOIN ratings AS R ON R.movie_id = M.id ";
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name SEPARATOR ', '), ']') AS genres, " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name)), ']') AS stars " +
+                           "FROM movies AS M " +
+                           "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
+                           "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
+                           "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
+                           "LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                           "LEFT JOIN ratings AS R ON R.movieId = M.id ";
 
             String parameter = null;
 
             if (genre != null) {
-                query += "WHERE G.name = ? ";
+                query += "WHERE EXISTS ( " +
+                         "    SELECT 1 " +
+                         "    FROM genres_in_movies AS GIM " +
+                         "    LEFT JOIN genres AS G ON GIM.genreId = G.id " +
+                         "    WHERE GIM.movieId = M.id" +
+                         "    AND G.name = ? " +
+                         ") ";
                 parameter = genre;
 
             } else if (!prefix.equals("*")) {
