@@ -36,6 +36,8 @@ public class CartServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
         HttpSession session = request.getSession();
 
         Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
@@ -44,6 +46,22 @@ public class CartServlet extends HttpServlet {
             session.setAttribute("cart", cart);
         }
 
+        PrintWriter out = response.getWriter();
 
+        try (Connection conn = dataSource.getConnection()) {
+            String query = "SELECT title, price FROM movies WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+
+        } catch (Exception e) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            request.getServletContext().log("Error:", e);
+            response.setStatus(500);
+
+        } finally {
+            out.close();
+        }
     }
 }
