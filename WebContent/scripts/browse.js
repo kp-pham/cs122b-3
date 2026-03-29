@@ -48,9 +48,21 @@ function buildUrl() {
     return (genre != null) ? `api/browse?genre=${genre}` : `api/browse?prefix=${prefix}`;
 }
 
+function submitOptionsForm(formSubmitEvent) {
+    formSubmitEvent.preventDefault();
+
+    const params = new URLSearchParams(window.location.search);
+    const sort = $("select[name=sort]").val();
+    params.set("sort", sort);
+
+    window.location.href = `browse.html?${params.toString()}`;
+}
+
 jQuery.ajax({
     dataType: "json",
     method: "GET",
     url: buildUrl(),
     success: (resultData) => handleResult(resultData)
 });
+
+$("#browse.html").submit(submitOptionsForm);
