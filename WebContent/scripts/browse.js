@@ -30,10 +30,10 @@ function handleResult(resultData) {
                 <td>${movie['genres'].slice(0, 3).join(', ')}</td>
                 <td>
                     ${movie['stars'].slice(0, 3).map(({id, name}) => {
-            return `<a href="single-star.html?id=${id}">${name}</a>`
-        }).join(', ')}
+                        return `<a href="single-star.html?id=${id}">${name}</a>`
+                    }).join(', ')}
                 </td>
-                <td>${movie['rating']}</td>
+                <td>${(movie['rating'] ?? "N/A")}</td>
             </tr>
         `;
 

@@ -15,7 +15,7 @@ function handleResult(resultData) {
                         return `<a href="single-star.html?id=${id}">${name}</a>`
                     }).join(', ')}
                 </td>
-                <td>${movie['rating']}</td>
+                <td>${(movie['rating'] ?? "N/A")}</td>
             </tr>
         `;
 
