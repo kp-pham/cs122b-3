@@ -14,7 +14,20 @@
         <div id="nav-placeholder"></div>
 
         <div id="movie-list" class="p-4">
-            <h3>Results</h3>
+            <form>
+                <h3>Results</h3>
+                <label for="sort">Sort by: </label>
+                <select id="sort" name="sort">
+                    <option value="title-asc-rating-desc">Title ↑ Rating ↓</option>
+                    <option value="title-desc-rating-asc">Title ↓ Rating ↑</option>
+                    <option value="title-asc-rating-asc">Title ↑ Rating ↑</option>
+                    <option value="title-desc-rating-desc">Title ↓ Rating ↓</option>
+                    <option value="rating-asc-title-desc">Rating ↑ Title ↓</option>
+                    <option value="rating-desc-title-asc">Rating ↓ Title ↑</option>
+                    <option value="rating-asc-title-asc">Rating ↑ Title ↑</option>
+                    <option value="title-desc-rating-desc">Rating ↓ Title ↓</option>
+                </select>
+            </form>
             <table id="movie-table" class="table table-striped">
                 <thead>
                 <tr>
