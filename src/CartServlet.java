@@ -114,6 +114,22 @@ public class CartServlet extends HttpServlet {
             session.setAttribute("cart", cart);
         }
 
+        String action = request.getParameter("action");
+        int movieId = Integer.parseInt(request.getParameter("id"));
+        int quantity = 0;
 
+        if (request.getParameter("quantity") != null) {
+            quantity = Integer.parseInt(request.getParameter("quantity"));
+        }
+
+        switch (action) {
+            case "add":
+                cart.put(movieId, cart.getOrDefault(movieId, 0) + quantity);
+                break;
+
+            case "remove":
+                cart.remove(movieId);
+                break;
+        }
     }
 }
