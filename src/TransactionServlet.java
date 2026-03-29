@@ -36,4 +36,34 @@ public class TransactionServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
+        HttpSession session = request.getSession();
+
+        Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("cart");
+        if (cart == null || cart.isEmpty()) {
+            return;
+        }
+
+        PrintWriter out = response.getWriter();
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        try (Connection conn = dataSource.getConnection()) {
+
+
+        } catch (Exception e) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            request.getServletContext().log("Error:", e);
+            response.setStatus(500);
+
+        } finally {
+            out.close();
+        }
+    }
 }
