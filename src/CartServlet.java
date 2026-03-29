@@ -52,6 +52,38 @@ public class CartServlet extends HttpServlet {
             String query = "SELECT title, price FROM movies WHERE id = ?";
             PreparedStatement statement = conn.prepareStatement(query);
 
+            JsonArray jsonArray = new JsonArray();
+
+            double total = 0;
+
+            for (Map.Entry<Integer, Integer> entry : cart.entrySet()) {
+                int movieId = entry.getKey();
+                int quantity = entry.getValue();
+
+                statement.setInt(1, movieId);
+                ResultSet rs = statement.executeQuery();
+
+                if (!rs.next()) continue;
+
+                String title = rs.getString("title");
+                double price = rs.getDouble("price");
+
+                double subtotal = price * quantity;
+                total += subtotal;
+
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("id", movieId);
+                jsonObject.addProperty("title", title);
+                jsonObject.addProperty("quantity", quantity);
+                jsonObject.addProperty("price", price);
+                jsonObject.addProperty("subtotal", subtotal);
+
+                jsonArray.add(jsonObject);
+            }
+
+            out.write(jsonArray.toString());
+            response.setStatus(200);
+
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
