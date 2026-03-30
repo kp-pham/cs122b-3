@@ -13,7 +13,7 @@ function handleResult(resultData) {
                         <input type="hidden" name="id" value="${item['id']}">
                         <button type="submit" class="rounded text-white bg-dark">-</button>
                     </form>
-                    ${item['quantity']}
+                    <span class="quantity">${item['quantity']}</span>
                     <form class="add-form" method="POST" action="#">
                         <input type="hidden" name="id" value="${item['id']}">
                         <button type="submit" class="rounded text-white bg-dark">+</button>
@@ -63,6 +63,12 @@ function submitAddForm(submitFormEvent) {
 
 function submitSubtractForm(submitFormEvent) {
     submitFormEvent.preventDefault();
+
+    let quantity = $(this).closest("td").find(".quantity").text();
+
+    if (quantity - 1 <= 0) {
+        return;
+    }
 
     let id = $(this).find("input[name='id']").val();
 
