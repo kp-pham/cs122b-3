@@ -8,12 +8,16 @@ function handleResult(resultData) {
                     <a href="single-movie.html?id=${item['id']}">${item['title']}</a>
                 </td>
                 <td>
-                   <button>-</button>
-                   ${item['quantity']}
-                   <button>+</button>
+                    <form id="quantityForm" method="POST" action="#">
+                        <button class="rounded text-white bg-dark">-</button>
+                        ${item['quantity']}
+                        <button class="rounded text-white bg-dark">+</button>
+                    </form>
                 </td>
                 <td>
-                    <button>Remove</button>
+                    <form id="removeForm" method="POST" action="#">
+                        <button class="rounded text-white bg-danger border-danger">Remove</button>
+                    </form>
                 </td>
                 <td>${item['price']}</td>
                 <td>${item['subtotal']}</td>
