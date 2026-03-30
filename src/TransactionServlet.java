@@ -171,13 +171,13 @@ public class TransactionServlet extends HttpServlet {
                 PreparedStatement selectStatement = conn.prepareStatement(selectQuery);
                 selectStatement.setString(1, movieId);
 
-                ResultSet rs = selectStatement.executeQuery();
+                ResultSet results = selectStatement.executeQuery();
 
-                if (!rs.next())
+                if (!results.next())
                     continue;
 
-                String title = rs.getString("title");
-                BigDecimal price = rs.getBigDecimal("price");
+                String title = results.getString("title");
+                BigDecimal price = results.getBigDecimal("price");
 
                 BigDecimal subtotal = price.multiply(new BigDecimal(quantity));
                 subtotal = subtotal.setScale(2, RoundingMode.HALF_UP);
