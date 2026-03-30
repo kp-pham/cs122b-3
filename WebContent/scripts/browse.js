@@ -37,7 +37,7 @@ function handleResult(resultData) {
                 <td>
                     <form class="cart-form" method="POST" action="#">
                         <input type="hidden" name="id" value="${movie['id']}">
-                        <button type="submit" class="rounded p-2 text-white bg-dark">Add</button>
+                        <button type="submit" class="rounded text-white bg-dark">Add</button>
                     </form>
                 </td>
             </tr>
