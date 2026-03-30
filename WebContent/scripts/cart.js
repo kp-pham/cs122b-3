@@ -34,7 +34,7 @@ function handleResult(resultData) {
     let itemsTable = $("#items-table");
 
     let footer = `
-        <tfoot>
+        <tfoot id="items-table-footer">
             <tr>
                 <td colspan="3"></td>
                 <td class="text-end text-dark fw-bold">Total:</td>
@@ -48,6 +48,9 @@ function handleResult(resultData) {
 
 function submitAddForm(submitFormEvent) {
     submitFormEvent.preventDefault();
+
+    $("#items-table-body").empty();
+    $("#items-table-footer").remove();
 
     let id = $(this).find("input[name='id']").val();
 
