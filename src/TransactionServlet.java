@@ -196,6 +196,7 @@ public class TransactionServlet extends HttpServlet {
                     insertStatement.executeUpdate(); // Throws SQLException when insertion fails
                     ResultSet keys = insertStatement.getGeneratedKeys();
 
+                    keys.next();
                     int saleId = keys.getInt(1);
 
                     JsonObject jsonObject = new JsonObject();
