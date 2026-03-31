@@ -152,7 +152,7 @@ public class TransactionServlet extends HttpServlet {
             }
 
             String insertQuery = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
-            PreparedStatement insertStatement = conn.prepareStatement(insertQuery);
+            PreparedStatement insertStatement = conn.prepareStatement(insertQuery, statement.RETURN_GENERATED_KEYS);
 
             Customer customer = (Customer) session.getAttribute("customer");
             int customerId = customer.getId();
@@ -185,7 +185,18 @@ public class TransactionServlet extends HttpServlet {
 
                 total = total.add(subtotal);
 
+                insertStatement.setInt(1, customerId);
+                insertStatement.setString(2, movieId);
+                insertStatement.setDate(3, date);
+                insertStatement.setInt(4, quantity);
+
+                insertStatement.executeUpdate();
+                ResultSet keys = insertStatement.getGeneratedKeys();
+
+                int saleId = keys.getInt(1);
+
                 JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("saleId", saleId);
                 jsonObject.addProperty("movieId", movieId);
                 jsonObject.addProperty("title", title);
                 jsonObject.addProperty("quantity", quantity);
@@ -193,13 +204,6 @@ public class TransactionServlet extends HttpServlet {
                 jsonObject.addProperty("subtotal", subtotal.doubleValue());
 
                 jsonArray.add(jsonObject);
-
-                insertStatement.setInt(1, customerId);
-                insertStatement.setString(2, movieId);
-                insertStatement.setDate(3, date);
-                insertStatement.setInt(4, quantity);
-
-                insertStatement.addBatch();
             }
 
             insertStatement.executeBatch();
