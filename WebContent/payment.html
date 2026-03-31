@@ -10,23 +10,25 @@
               integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <title>Payment</title>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <div id="nav-placeholder"></div>
 
-        <h2>Payment Information</h2>
-        <form>
-            <label for="firstName">First Name: </label>
-            <input name="firstName" type="text" id="firstName" required>
+        <div id="payment" class="w-100 p-5 rounded bg-white">
+            <h2>Payment Information</h2>
+            <form id="payment-form" method="POST" action="#" class="d-flex flex-column gap-3">
+                <label for="firstName">First Name: </label>
+                <input name="firstName" type="text" id="firstName" required>
 
-            <label for="lastName">Last Name: </label>
-            <input name="lastName" type="text" id="lastName" required>
+                <label for="lastName">Last Name: </label>
+                <input name="lastName" type="text" id="lastName" required>
 
-            <label for="card">Credit Card Number: </label>
-            <input name="card" type="text" id="card" required>
+                <label for="card">Credit Card Number: </label>
+                <input name="card" type="text" id="card" required>
 
-            <label for="expiration">Expiration Date: </label>
-            <input name="expiration" type="text" id="expiration" required>
-        </form>
+                <label for="expiration">Expiration Date: </label>
+                <input name="expiration" type="text" id="expiration" required>
+            </form>
+        </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
