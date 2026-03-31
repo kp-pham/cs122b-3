@@ -1,17 +1,29 @@
 const paymentForm = $("#payment-form");
+const errorMessage = $("#payment_error_message");
 
 function handleResult(resultData) {
     $("#total").text(`Order Total: $${resultData["total"].toFixed(2)}`);
 }
 
+function handleSuccess(resultData) {
+    window.location.href = "confirmation.html";
+}
+
+function handleFailure(jqXHR) {
+    errorMessage.removeClass("d-none");
+    errorMessage.text(jqXHR.responseJSON.message);
+}
+
 function submitPaymentForm(formSubmitEvent) {
+    formSubmitEvent.preventDefault();
+
     jQuery.ajax({
         dataType: "json",
         method: "POST",
         data: paymentForm.serialize(),
         url: "api/transactions",
-        success: (resultData) => handlePaymentResult(resultData),
-        failure: (resultData) => handlePaymentFailed(resultData)
+        success: (resultData) => handleSuccess(resultData),
+        error: (jqXHR) => handleFailure(jqXHR)
     });
 }
 

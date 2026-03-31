@@ -17,7 +17,7 @@
             <h2>Payment Information</h2>
             <p id="total" class="fw-bold color-dark"></p>
 
-            <div id="login_error_message" class="alert alert-danger p-2 d-none" role="alert"></div>
+            <div id="payment_error_message" class="alert alert-danger p-2 d-none" role="alert"></div>
 
             <form id="payment-form" method="POST" action="#" class="d-flex flex-column gap-3">
                 <div class="d-flex flex-column">
@@ -37,7 +37,7 @@
 
                 <div class="d-flex flex-column">
                     <label for="expiration">Expiration Date: </label>
-                    <input name="expiration" type="text" id="expiration" required>
+                    <input name="expiration" type="date" id="expiration" required>
                 </div>
 
                 <button type="submit" class="rounded p-2 text-white bg-dark">Place Order</button>

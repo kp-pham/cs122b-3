@@ -79,7 +79,7 @@ public class TransactionServlet extends HttpServlet {
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
+            jsonObject.addProperty("message", e.getMessage());
             out.write(jsonObject.toString());
 
             request.getServletContext().log("Error:", e);
@@ -119,7 +119,7 @@ public class TransactionServlet extends HttpServlet {
 
         if (!hasFirstName || !hasLastName || !hasCard || !hasExpiration) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", "Please provide payment information");
+            jsonObject.addProperty("message", "Please provide payment information");
             out.write(jsonObject.toString());
 
             response.setStatus(400);
@@ -212,7 +212,7 @@ public class TransactionServlet extends HttpServlet {
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
+            jsonObject.addProperty("message", e.getMessage());
             out.write(jsonObject.toString());
 
             request.getServletContext().log("Error:", e);
