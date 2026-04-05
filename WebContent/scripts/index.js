@@ -8,8 +8,7 @@ function handleClick(clickEvent) {
         type: "browse",
         [type]: value,
         page: 1,
-        sortBy: "title",
-        sortOrder: "asc",
+        sort: "title-asc-rating-desc",
         itemsPerPage: 25
     }));
 

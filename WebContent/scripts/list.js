@@ -66,9 +66,33 @@ function showResults() {
     if (isValid(state)) {
 
     } else {
+        // Handle constructing state with only non-null attributes
+
         const genre = getParameterByName("genre");
         const prefix = getParameterByName("prefix");
         const sort = getParameterByName("sort") || "title-asc-rating-desc";
+
+        if (genre != null) {
+            state = {
+                type: "browse",
+                genre: genre,
+                page: 1,
+                sort: sort,
+                itemsPerPage: 25
+            }
+        } else if (prefix != null) {
+            state = {
+                type: "browse",
+                prefix: prefix,
+                page: 1,
+                sort: sort,
+                itemsPerPage: 25
+            }
+        } else {
+            // State for search
+        }
+
+        sessionStorage.setItem("movieListState", JSON.stringify(state));
 
         const params = new URLSearchParams();
     }
