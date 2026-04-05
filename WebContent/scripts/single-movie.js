@@ -20,7 +20,7 @@ function handleResult(resultData) {
     $("title").text(resultData["title"]);
     $("h3").text(resultData["title"] + " (" + resultData["year"] + ")");
 
-    let movieTable = jQuery("#movie_table");
+    let movieTable = jQuery("#movie-table-body");
 
     let row = `
         <tr>
