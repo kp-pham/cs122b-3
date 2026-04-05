@@ -119,19 +119,20 @@ public class CartServlet extends HttpServlet {
         String action = request.getParameter("action");
         String movieId = request.getParameter("id");
 
-        // Need synchronization?
-        switch (action) {
-            case "add":
-                cart.put(movieId, cart.getOrDefault(movieId, 0) + 1);
-                break;
+        synchronized(cart) {
+            switch (action) {
+                case "add":
+                    cart.put(movieId, cart.getOrDefault(movieId, 0) + 1);
+                    break;
 
-            case "subtract":
-                cart.put(movieId, cart.getOrDefault(movieId, 0) - 1);
-                break;
+                case "subtract":
+                    cart.put(movieId, cart.getOrDefault(movieId, 0) - 1);
+                    break;
 
-            case "remove":
-                cart.remove(movieId);
-                break;
+                case "remove":
+                    cart.remove(movieId);
+                    break;
+            }
         }
 
         doGet(request, response);
