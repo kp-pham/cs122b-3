@@ -1,3 +1,5 @@
+const alertContainer = $("#alert-container");
+
 function getParameterByName(target) {
     // Retrieve URL from browser window
     let url = window.location.href;
@@ -146,6 +148,28 @@ function showResults() {
     });
 }
 
+function showSuccess() {
+    const alert = `
+        <div class="alert alert-success fade show" role="alert">
+            Successfully added movie to cart!
+            <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    alertContainer.append(alert);
+}
+
+function showFailure() {
+    const alert = `
+        <div class="alert alert-warning fade show" role="alert">
+            Something went wrong. Please try again.
+            <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    alertContainer.append(alert);
+}
+
 function submitCartForm(submitFormEvent) {
     submitFormEvent.preventDefault();
 
@@ -154,7 +178,9 @@ function submitCartForm(submitFormEvent) {
     jQuery.ajax({
         dataType: "json",
         method: "POST",
-        url: `api/cart?action=add&id=${encodeURIComponent(id)}`
+        url: `api/cart?action=add&id=${encodeURIComponent(id)}`,
+        success: showSuccess,
+        failure: showFailure
     });
 }
 
