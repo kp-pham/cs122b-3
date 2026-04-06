@@ -150,20 +150,20 @@ function showResults() {
 
 function showSuccess() {
     const alert = `
-        <div class="alert alert-success fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show rounded-0" role="alert">
             Successfully added movie to cart!
-            <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
 
-    alertContainer.append(alert);
+    alertContainer.prepend(alert);
 }
 
 function showFailure() {
     const alert = `
-        <div class="alert alert-warning fade show" role="alert">
-            Something went wrong. Please try again.
-            <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-warning alert-dismissible fade show rounded-0" role="alert">
+            Something went wrong, please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
 
