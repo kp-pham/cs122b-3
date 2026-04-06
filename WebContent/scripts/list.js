@@ -18,7 +18,7 @@ function getParameterByName(target) {
 
 function handleResult(resultData) {
     const sort = getParameterByName("sort") || "title-asc-rating-desc";
-    const page = getParameterByName("page") || 1;
+    const page = Number(getParameterByName("page")) || 1;
     const offset = getParameterByName("offset") || 1;
 
     const sortDropdown = jQuery("#sort");
@@ -55,16 +55,16 @@ function handleResult(resultData) {
 
     let pageLookup = jQuery("#page-lookup");
     pageLookup.append(`
-        <form id="previous-form" method="GET" action="#">
-            <input type="hidden" name="page" value="${page - 1}">
+        <form id="previous-page" method="GET" action="#" class="page-form">
+            <input type="hidden" id="page" value="${page - 1}">
             <button type="submit" class="rounded text-white bg-dark" 
                     ${(page - 1 < 1) ? "disabled" : ""}>\<</button>
         </form>
-        <form id="page-form">
+        <form id="page-jump" method="GET" action="#" class="page-form">
             <input type="text" pattern="[0-9]+" id="page" value="${page}">
         </form>
-        <form id="next-form" method="GET" action="#">
-            <input type="hidden" name="page" value="${page + 1}">
+        <form id="next-page" method="GET" action="#" class="page-form">
+            <input type="hidden" id="page" value="${page + 1}">
             <button type="submit" class="rounded text-white bg-dark">\></button>
         </form>
     `);
@@ -169,7 +169,18 @@ function submitOptionsForm(formSubmitEvent) {
     window.location.href = `list.html?${params.toString()}`;
 }
 
+function submitPageForm(formSubmitEvent) {
+    formSubmitEvent.preventDefault();
+
+    const params = new URLSearchParams(window.location.search);
+    const page = $(this).find("input[id='page']").val();
+    params.set("page", page);
+
+    window.location.href = `list.html?${params.toString()}`;
+}
+
 showResults();
 
 $("#options-form").submit(submitOptionsForm);
+$(document).on("submit", ".page-form", submitPageForm)
 $(document).on("submit", ".cart-form", submitCartForm);
