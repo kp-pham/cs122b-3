@@ -60,9 +60,7 @@ function handleResult(resultData) {
             <button type="submit" class="rounded text-white bg-dark" 
                     ${(page - 1 < 1) ? "disabled" : ""}>\<</button>
         </form>
-        <form id="page-jump" method="GET" action="#" class="page-form">
-            <input type="text" pattern="[0-9]+" id="page" value="${page}">
-        </form>
+        <input type="text" pattern="[0-9]+" id="page" value="${page}" disabled>
         <form id="next-page" method="GET" action="#" class="page-form">
             <input type="hidden" id="page" value="${page + 1}">
             <button type="submit" class="rounded text-white bg-dark"
