@@ -153,7 +153,7 @@ function showResults() {
 
 function showSuccess() {
     alertContainer.insertAdjacentHTML("afterbegin", `
-        <div class="alert alert-success alert-dismissible fade show position-fixed w-100 m-0 rounded-0" role="alert">
+        <div class="alert alert-success alert-dismissible fade show position-absolute top-0 w-100 m-0 rounded-0" role="alert">
             Successfully added movie to cart!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -162,7 +162,7 @@ function showSuccess() {
 
 function showFailure() {
     alertContainer.insertAdjacentHTML("afterbegin", `
-        <div class="alert alert-warning alert-dismissible fade show position-fixed w-100 m-0 rounded-0" role="alert">
+        <div class="alert alert-warning alert-dismissible fade show position-absolute top-0 w-100 m-0 rounded-0" role="alert">
             Something went wrong, please try again.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
