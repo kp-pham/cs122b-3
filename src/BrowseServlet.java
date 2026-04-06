@@ -35,6 +35,9 @@ public class BrowseServlet extends HttpServlet {
     private static final String SORT_RATING_ASC_TITLE_ASC = "rating-asc-title-asc";
     private static final String SORT_RATING_DESC_TITLE_DESC = "rating-desc-title-desc";
 
+    private static final int DEFAULT_PAGE_NUMBER = 1;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
@@ -50,7 +53,24 @@ public class BrowseServlet extends HttpServlet {
         String prefix = request.getParameter("prefix");
         String sort = request.getParameter("sort");
         String page = request.getParameter("page");
-        String offset = request.getParameter("offset");
+        String size = request.getParameter("size");
+
+        int pageNumber = DEFAULT_PAGE_NUMBER;
+        int pageSize = DEFAULT_PAGE_SIZE;
+
+        try {
+            if (page != null)
+                pageNumber = Integer.parseInt(page);
+
+            if (size != null)
+                pageSize = Integer.parseInt(size);
+
+        } catch (NumberFormatException e) {
+            pageNumber = DEFAULT_PAGE_NUMBER;
+            pageSize = DEFAULT_PAGE_SIZE;
+        }
+
+        int offset = (pageNumber - 1) * pageSize;
 
         PrintWriter out = response.getWriter();
 
@@ -94,27 +114,27 @@ public class BrowseServlet extends HttpServlet {
 
             switch(sort) {
                 case SORT_TITLE_DESC_RATING_ASC:
-                    query += "ORDER BY M.title DESC, R.rating ASC";
+                    query += "ORDER BY M.title DESC, R.rating ASC ";
                     break;
 
                 case SORT_TITLE_ASC_RATING_ASC:
-                    query += "ORDER BY M.title ASC, R.rating ASC";
+                    query += "ORDER BY M.title ASC, R.rating ASC ";
                     break;
 
                 case SORT_TITLE_DESC_RATING_DESC:
-                    query += "ORDER BY M.title DESC, R.rating DESC";
+                    query += "ORDER BY M.title DESC, R.rating DESC ";
                     break;
 
                 case SORT_RATING_ASC_TITLE_DESC:
-                    query += "ORDER BY R.rating ASC, M.title DESC";
+                    query += "ORDER BY R.rating ASC, M.title DESC ";
                     break;
 
                 case SORT_RATING_DESC_TITLE_ASC:
-                    query += "ORDER BY R.rating DESC, M.title ASC";
+                    query += "ORDER BY R.rating DESC, M.title ASC ";
                     break;
 
                 case SORT_RATING_ASC_TITLE_ASC:
-                    query += "ORDER BY R.rating ASC, M.title ASC";
+                    query += "ORDER BY R.rating ASC, M.title ASC ";
                     break;
 
                 case SORT_RATING_DESC_TITLE_DESC:
@@ -122,15 +142,20 @@ public class BrowseServlet extends HttpServlet {
                     break;
 
                 default:
-                    query += "ORDER BY M.title ASC, R.rating DESC";
+                    query += "ORDER BY M.title ASC, R.rating DESC ";
                     break;
             }
+
+            query += "LIMIT ? OFFSET ?";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
             if (parameter != null) {
                 statement.setString(1, parameter);
             }
+
+            statement.setInt(2, pageSize);
+            statement.setInt(3, offset);
 
             ResultSet rs = statement.executeQuery();
 
