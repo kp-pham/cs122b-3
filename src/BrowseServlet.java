@@ -53,9 +53,15 @@ public class BrowseServlet extends HttpServlet {
         String page = request.getParameter("page");
         String size = request.getParameter("size");
 
+        String trimmedGenre = (genre == null) ? null : genre.trim();
+        String trimmedPrefix = (prefix == null) ? null : prefix.trim();
+
+        boolean hasGenre = (trimmedGenre != null && !trimmedGenre.isEmpty());
+        boolean hasPrefix = (trimmedPrefix != null && !trimmedPrefix.isEmpty());
+
         PrintWriter out = response.getWriter();
 
-        if ((genre == null || genre.isEmpty()) && (prefix == null || prefix.isEmpty())) {
+        if (!hasGenre && !hasPrefix) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("message", "Please provide a search parameter");
             out.write(jsonObject.toString());
@@ -107,7 +113,7 @@ public class BrowseServlet extends HttpServlet {
 
             String parameter = null;
 
-            if (genre != null && !genre.isEmpty()) {
+            if (hasGenre) {
                 query += "WHERE EXISTS ( " +
                          "    SELECT 1 " +
                          "    FROM genres_in_movies AS GIM " +
@@ -115,11 +121,11 @@ public class BrowseServlet extends HttpServlet {
                          "    WHERE GIM.movieId = M.id" +
                          "    AND G.name = ? " +
                          ") ";
-                parameter = genre;
+                parameter = trimmedGenre;
 
-            } else if (!prefix.equals("*")) {
+            } else if (!trimmedPrefix.equals("*")) {
                 query += "WHERE M.title LIKE ? ";
-                parameter = prefix + "%";
+                parameter = trimmedPrefix + "%";
 
             } else {
                 query += "WHERE M.title REGEXP '^[^a-z0-9]' ";
@@ -211,7 +217,5 @@ public class BrowseServlet extends HttpServlet {
         } finally {
             out.close();
         }
-
-
     }
 }
