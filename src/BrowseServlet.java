@@ -51,7 +51,7 @@ public class BrowseServlet extends HttpServlet {
         String prefix = request.getParameter("prefix");
         String sort = request.getParameter("sort");
         String page = request.getParameter("page");
-        String size = request.getParameter("size");
+        String size = request.getParameter("pageSize");
 
         String trimmedGenre = (genre == null) ? null : genre.trim();
         String trimmedPrefix = (prefix == null) ? null : prefix.trim();
@@ -77,7 +77,7 @@ public class BrowseServlet extends HttpServlet {
             if (page != null && !page.isEmpty())
                 pageNumber = Integer.parseInt(page);
 
-            if (size != null && !page.isEmpty())
+            if (size != null && !size.isEmpty())
                 pageSize = Integer.parseInt(size);
 
         } catch (NumberFormatException e) {

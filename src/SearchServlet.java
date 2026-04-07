@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(name = "SearchServlet", urlPatterns = "/api/search")
 public class SearchServlet extends HttpServlet {
@@ -33,6 +34,9 @@ public class SearchServlet extends HttpServlet {
     private static final String SORT_RATING_DESC_TITLE_ASC = "rating-desc-title-asc";
     private static final String SORT_RATING_ASC_TITLE_ASC = "rating-asc-title-asc";
     private static final String SORT_RATING_DESC_TITLE_DESC = "rating-desc-title-desc";
+
+    private static final int DEFAULT_PAGE_NUMBER = 1;
+    private static final int DEFAULT_PAGE_SIZE = 25;
 
     public void init(ServletConfig config) {
         try {
@@ -50,6 +54,8 @@ public class SearchServlet extends HttpServlet {
         String director = request.getParameter("director");
         String star = request.getParameter("star");
         String sort = request.getParameter("sort");
+        String page = request.getParameter("page");
+        String size = request.getParameter("pageSize");
 
         String trimmedTitle = (title == null) ? null : title.trim();
         String trimmedYear = (year == null) ? null : year.trim();
@@ -70,6 +76,29 @@ public class SearchServlet extends HttpServlet {
 
             response.setStatus(400);
             return;
+        }
+
+        int pageNumber = DEFAULT_PAGE_NUMBER;
+        int pageSize = DEFAULT_PAGE_SIZE;
+
+        try {
+            if (page != null && !page.isEmpty())
+                pageNumber = Integer.parseInt(page);
+
+            if (size != null && !size.isEmpty())
+                pageSize = Integer.parseInt(size);
+
+        } catch (NumberFormatException e) {
+            pageNumber = DEFAULT_PAGE_NUMBER;
+            pageSize = DEFAULT_PAGE_SIZE;
+
+        } finally {
+            if (pageNumber < 1)
+                pageNumber = DEFAULT_PAGE_NUMBER;
+
+            Set<Integer> allowedSizes = Set.of(10, 25, 50, 100);
+            if (!allowedSizes.contains(pageSize))
+                pageSize = DEFAULT_PAGE_SIZE;
         }
 
         try (Connection conn = dataSource.getConnection()) {
@@ -154,6 +183,11 @@ public class SearchServlet extends HttpServlet {
                     break;
             }
 
+            query += "LIMIT ? OFFSET ?";
+
+            params.add(pageNumber);
+            params.add(pageSize + 1);
+
             PreparedStatement statement = conn.prepareStatement(query);
             for (int i = 0; i < params.size(); ++i) {
                 statement.setObject(i + 1, params.get(i));
@@ -182,6 +216,21 @@ public class SearchServlet extends HttpServlet {
             }
 
             JsonObject jsonObject = new JsonObject();
+
+            if (jsonArray.size() > pageSize) {
+                jsonObject.addProperty("lastPage", false);
+                jsonObject.addProperty("outOfBounds", false);
+                jsonArray.remove(jsonArray.size() - 1);
+
+            } else if (jsonArray.isEmpty()) {
+                jsonObject.addProperty("lastPage", true);
+                jsonObject.addProperty("outOfBounds", true);
+
+            } else {
+                jsonObject.addProperty("lastPage", true);
+                jsonObject.addProperty("outOfBounds", false);
+            }
+
             jsonObject.add("results", jsonArray);
 
             rs.close();
