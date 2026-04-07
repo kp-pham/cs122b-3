@@ -25,6 +25,15 @@ public class SearchServlet extends HttpServlet {
 
     private DataSource dataSource;
 
+    private static final String SORT_TITLE_DESC_RATING_ASC = "title-desc-rating-asc";
+    private static final String SORT_TITLE_ASC_RATING_ASC = "title-asc-rating-asc";
+    private static final String SORT_TITLE_DESC_RATING_DESC = "title-desc-rating-desc";
+
+    private static final String SORT_RATING_ASC_TITLE_DESC = "rating-asc-title-desc";
+    private static final String SORT_RATING_DESC_TITLE_ASC = "rating-desc-title-asc";
+    private static final String SORT_RATING_ASC_TITLE_ASC = "rating-asc-title-asc";
+    private static final String SORT_RATING_DESC_TITLE_DESC = "rating-desc-title-desc";
+
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
@@ -40,6 +49,7 @@ public class SearchServlet extends HttpServlet {
         String year = request.getParameter("year");
         String director = request.getParameter("director");
         String star = request.getParameter("star");
+        String sort = request.getParameter("sort");
 
         String trimmedTitle = (title == null) ? null : title.trim();
         String trimmedYear = (year == null) ? null : year.trim();
@@ -108,7 +118,41 @@ public class SearchServlet extends HttpServlet {
             }
 
             query += "GROUP BY M.id, M.title, M.year, M.director, R.rating " +
-                     "ORDER BY R.rating DESC";
+                     "ORDER BY R.rating DESC ";
+
+            switch(sort) {
+                case SORT_TITLE_DESC_RATING_ASC:
+                    query += "ORDER BY M.title DESC, R.rating ASC ";
+                    break;
+
+                case SORT_TITLE_ASC_RATING_ASC:
+                    query += "ORDER BY M.title ASC, R.rating ASC ";
+                    break;
+
+                case SORT_TITLE_DESC_RATING_DESC:
+                    query += "ORDER BY M.title DESC, R.rating DESC ";
+                    break;
+
+                case SORT_RATING_ASC_TITLE_DESC:
+                    query += "ORDER BY R.rating ASC, M.title DESC ";
+                    break;
+
+                case SORT_RATING_DESC_TITLE_ASC:
+                    query += "ORDER BY R.rating DESC, M.title ASC ";
+                    break;
+
+                case SORT_RATING_ASC_TITLE_ASC:
+                    query += "ORDER BY R.rating ASC, M.title ASC ";
+                    break;
+
+                case SORT_RATING_DESC_TITLE_DESC:
+                    query += "ORDER BY R.rating DESC, M.title DESC";
+                    break;
+
+                default:
+                    query += "ORDER BY M.title ASC, R.rating DESC ";
+                    break;
+            }
 
             PreparedStatement statement = conn.prepareStatement(query);
             for (int i = 0; i < params.size(); ++i) {
@@ -136,6 +180,9 @@ public class SearchServlet extends HttpServlet {
 
                 jsonArray.add(jsonObject);
             }
+
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add("results", jsonArray);
 
             rs.close();
             statement.close();
