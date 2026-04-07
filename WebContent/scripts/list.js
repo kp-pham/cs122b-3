@@ -36,9 +36,10 @@ function handleResult(resultData) {
         <form id="previous-page" method="GET" action="#" class="page-form">
             <input type="hidden" id="page" value="${page - 1}">
             <button type="submit" class="rounded text-white bg-dark" 
-                    ${(page - 1 < 1) ? "disabled" : ""}>\<</button>
+                    ${(page - 1 < 1 || resultData["outOfBounds"]) ? "disabled" : ""}>\<</button>
         </form>
-        <input type="text" pattern="[0-9]+" id="page" value="${page}" disabled>
+        <input type="text" pattern="[0-9]+" id="page" 
+               value="${!resultData["outOfBounds"] ? page : ""}" disabled>
         <form id="next-page" method="GET" action="#" class="page-form">
             <input type="hidden" id="page" value="${page + 1}">
             <button type="submit" class="rounded text-white bg-dark"

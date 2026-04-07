@@ -205,10 +205,16 @@ public class BrowseServlet extends HttpServlet {
 
             if (jsonArray.size() > pageSize) {
                 jsonObject.addProperty("lastPage", false);
+                jsonObject.addProperty("outOfBounds", false);
                 jsonArray.remove(jsonArray.size() - 1);
+
+            } else if (jsonArray.isEmpty()) {
+                jsonObject.addProperty("lastPage", true);
+                jsonObject.addProperty("outOfBounds", true);
 
             } else {
                 jsonObject.addProperty("lastPage", true);
+                jsonObject.addProperty("outOfBounds", false);
             }
 
             jsonObject.add("results", jsonArray);
@@ -221,7 +227,7 @@ public class BrowseServlet extends HttpServlet {
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
+            jsonObject.addProperty("message", e.getMessage());
             out.write(jsonObject.toString());
 
             request.getServletContext().log("Error:", e);
