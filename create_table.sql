@@ -95,3 +95,6 @@ CREATE INDEX index_movie_titles
 
 CREATE INDEX index_genre_names
     ON genres(name);
+
+CREATE INDEX index_ratings
+    ON ratings(movieId);
