@@ -193,7 +193,7 @@ function submitOptionsForm(formSubmitEvent) {
     const params = new URLSearchParams();
 
     Object.entries(state).forEach(([key, value]) => {
-        if (key !== "type") {
+        if (key !== "type" && value != null) {
             params.append(key, value);
         }
     });
@@ -211,7 +211,7 @@ function submitPageForm(formSubmitEvent) {
     const params = new URLSearchParams();
 
     Object.entries(state).forEach(([key, value]) => {
-        if (key !== "type") {
+        if (key !== "type" && value != null) {
             params.append(key, value);
         }
     });
