@@ -47,6 +47,9 @@ function handleResult(resultData) {
 
     $("#items-table-footer").remove();
     itemsTable.append(footer);
+
+    const items = $("#items-table tbody tr").length;
+    $("#proceed-button").prop("disabled", items === 0);
 }
 
 function submitAddForm(submitFormEvent) {
