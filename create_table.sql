@@ -98,3 +98,6 @@ CREATE INDEX index_genre_names
 
 CREATE INDEX index_ratings
     ON ratings(movieId);
+
+CREATE INDEX index_emails
+    ON customers(email);
