@@ -14,7 +14,7 @@ public class UpdateSecurePassword {
         String url = System.getenv("URL");
 
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(username, password, url);
+        Connection conn = DriverManager.getConnection(url, username, password);
         Statement statement = conn.createStatement();
 
         String alterQuery = "ALTER TABLE customers MODIFY COLUMN password VARCHAR(128)";
