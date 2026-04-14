@@ -34,5 +34,9 @@ public class RecaptchaVerifyUtils {
         JsonObject jsonObject = new Gson().fromJson(inputStreamReader, JsonObject.class);
 
         inputStreamReader.close();
+
+        if (!jsonObject.get("success").getAsBoolean()) {
+            throw new Exception("recaptcha verification failed: response was " + jsonObject);
+        }
     }
 }
