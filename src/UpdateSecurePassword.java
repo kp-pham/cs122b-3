@@ -8,7 +8,7 @@ import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 public class UpdateSecurePassword {
-    public statis void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         String username = System.getenv("USER");
         String password = System.getenv("PASSWORD");
         String url = System.getenv("URL");
@@ -20,5 +20,37 @@ public class UpdateSecurePassword {
         String alterQuery = "ALTER TABLE customers MODIFY COLUMN password VARCHAR(128)";
         int alterResult = statement.executeUpdate(alterQuery);
         System.out.println("altering customers table schema completed, " + alterResult + " rows affected");
+
+        String query = "SELECT id, password FROM customers";
+
+        ResultSet rs = statement.executeQuery(query);
+
+        PasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
+
+        ArrayList<String> updateQueries = new ArrayList<>();
+
+        while (rs.next()) {
+            String id = rs.getString("id");
+            String plaintext = rs.getString("password");
+
+            String encryptedPassword = passwordEncryptor.encryptPassword(plaintext);
+
+            String updateQuery = String.format("UPDATE customers SET password = '%s' WHERE id = %s", encryptedPassword, id);
+            updateQueries.add(updateQuery);
+        }
+
+        rs.close();
+
+        int count = 0;
+
+        for (String updateQuery : updateQueries) {
+            int updateResult = statement.executeUpdate(updateQuery);
+            count += updateResult;
+        }
+
+        System.out.println("updating password completed, " + count + " rows affected");
+
+        statement.close();
+        conn.close();
     }
 }
