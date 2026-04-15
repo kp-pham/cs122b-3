@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -19,6 +20,15 @@ public class InsertEmployee {
         Connection conn = DriverManager.getConnection(url, username, password);
         PreparedStatement statement = conn.prepareStatement(query);
 
+        Scanner scanner = new Scanner(System.in);
 
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        System.out.print("Password: ");
+        String encryptedPassword = new StrongPasswordEncryptor().encryptPassword(scanner.nextLine());
+
+        System.out.print("Full Name: ");
+        String fullName = scanner.nextLine();
     }
 }
