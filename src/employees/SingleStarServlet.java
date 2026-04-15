@@ -38,19 +38,37 @@ public class SingleStarServlet extends HttpServlet {
         response.setContentType("application/json");
 
         String name = request.getParameter("name");
-        String birthYear = request.getParameter("birthYear");
 
         PrintWriter out = response.getWriter();
 
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("message", "Please provide a name for the star.");
+            jsonObject.addProperty("message", "Please provide a name.");
 
             out.write(jsonObject.toString());
             response.setStatus(400);
 
             out.close();
             return;
+        }
+
+        String param = request.getParameter("birthYear");
+        Integer birthYear = null;
+
+        if (param != null && !param.trim().isEmpty()) {
+            try {
+                birthYear = Integer.parseInt(param);
+
+            } catch (Exception e) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("message", "Please provide a valid birth year.");
+
+                out.write(jsonObject.toString());
+                response.setStatus(400);
+
+                out.close();
+                return;
+            }
         }
 
         try (Connection conn = dataSource.getConnection()) {
