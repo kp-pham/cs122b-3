@@ -23,7 +23,7 @@ import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 
-@WebServlet(name = "customers.LoginServlet", urlPatterns = "/api/employees/login")
+@WebServlet(name = "employees.LoginServlet", urlPatterns = "/api/employees/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

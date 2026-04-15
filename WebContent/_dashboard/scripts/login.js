@@ -14,7 +14,7 @@ function submitLoginForm(formSubmitEvent) {
     formSubmitEvent.preventDefault();
 
     $.ajax(
-        "api/login", {
+        "api/employees/login", {
             method: "POST",
             data: loginForm.serialize(),
             success: handleLoginSuccess,
