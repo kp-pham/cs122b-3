@@ -75,6 +75,13 @@ CREATE TABLE ratings(
     FOREIGN KEY (movieId) REFERENCES movies(id)
 );
 
+CREATE TABLE employees(
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(128) NOT NULL,
+    fullName VARCHAR(100) NOT NULL,
+    PRIMARY KEY (email)
+);
+
 CREATE INDEX index_top_rated
     ON ratings (rating DESC, movieId);
 
