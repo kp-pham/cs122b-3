@@ -44,6 +44,7 @@ public class SchemaServlet extends HttpServlet {
                            "JSON_ARRAYAGG(JSON_OBJECT('name', COLUMN_NAME, 'type', DATA_TYPE)) AS columns " +
                            "FROM INFORMATION_SCHEMA.COLUMNS " +
                            "WHERE TABLE_SCHEMA = ? " +
+                           "GROUP BY TABLE_NAME " +
                            "ORDER BY TABLE_NAME";
 
             PreparedStatement statement = conn.prepareStatement(query);
