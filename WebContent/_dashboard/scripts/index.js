@@ -14,14 +14,14 @@ function handleResult(resultData) {
                 </tr>
                 </thead>
                 <tbody id="${table["name"]}-table-body">
-                    <tr>
-                        ${table["columns"].map(column => {
-                            return `
+                    ${table["columns"].map(column => {
+                        return `
+                            <tr>
                                 <td>${column["name"]}</td>
-                                <td>${column["type"]}</td>       
-                            `;
-                        })}
-                    </tr>
+                                <td>${column["type"]}</td> 
+                            </tr>      
+                        `;
+                    })}
                 </tbody>
             </table>
         `;
