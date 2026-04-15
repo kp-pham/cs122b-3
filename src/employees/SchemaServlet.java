@@ -48,6 +48,14 @@ public class SchemaServlet extends HttpServlet {
 
             ResultSet rs = statement.executeQuery();
 
+            JsonArray jsonArray = new JsonArray();
+
+            while (rs.next()) {
+                JsonObject jsonObject = new JsonObject();
+
+                jsonObject.addProperty("tableName", rs.getString("TABLE_NAME"));
+            }
+
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
