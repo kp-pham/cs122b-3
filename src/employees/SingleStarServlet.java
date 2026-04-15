@@ -69,6 +69,17 @@ public class SingleStarServlet extends HttpServlet {
                 out.close();
                 return;
             }
+
+            if (birthYear < 0) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("message", "Please provide a nonnegative number for the birth year.");
+
+                out.write(jsonObject.toString());
+                response.setStatus(400);
+
+                out.close();
+                return;
+            }
         }
 
         try (Connection conn = dataSource.getConnection()) {
