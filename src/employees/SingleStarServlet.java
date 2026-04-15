@@ -31,4 +31,26 @@ public class SingleStarServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
+        String name = request.getParameter("name");
+        String birthYear = request.getParameter("birthYear");
+
+        PrintWriter out = response.getWriter();
+
+        if (name == null || name.isEmpty()) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", "Please provide a name for the star.");
+
+            out.write(jsonObject.toString());
+            response.setStatus(400);
+
+            out.close();
+            return;
+        }
+
+
+    }
 }
