@@ -1,6 +1,7 @@
+package customers;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -15,9 +16,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
-@WebServlet(name = "GenresServlet", urlPatterns = "/api/genres")
+@WebServlet(name = "customers.GenresServlet", urlPatterns = "/api/genres")
 public class GenresServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

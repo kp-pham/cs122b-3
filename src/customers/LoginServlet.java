@@ -1,6 +1,6 @@
-import com.google.gson.JsonArray;
+package customers;
+
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -15,14 +15,12 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Objects;
 
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 
-@WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
+@WebServlet(name = "customers.LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

@@ -1,6 +1,7 @@
+package customers;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -17,13 +18,12 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@WebServlet(name = "CartServlet", urlPatterns = "/api/cart")
+@WebServlet(name = "customers.CartServlet", urlPatterns = "/api/cart")
 public class CartServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

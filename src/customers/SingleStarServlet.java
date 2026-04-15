@@ -1,3 +1,5 @@
+package customers;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -16,7 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet(name = "SingleStarServlet", urlPatterns= "/api/single-star")
+@WebServlet(name = "customers.SingleStarServlet", urlPatterns= "/api/single-star")
 public class SingleStarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

@@ -1,3 +1,5 @@
+package customers;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -16,8 +18,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet(name = "TopRatedServlet", urlPatterns="/api/")
-public class TopRatedServlet extends HttpServlet {
+@WebServlet(name = "customers.SingleMovieServlet", urlPatterns="/api/single-movie")
+public class SingleMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     private DataSource dataSource;
@@ -35,56 +37,54 @@ public class TopRatedServlet extends HttpServlet {
 
         String id = request.getParameter("id");
 
-        request.getServletContext().log("getting top 20 rated movies");
+        request.getServletContext().log("getting movie id: " + id);
 
         PrintWriter out = response.getWriter();
 
         try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT M.id, M.title, M.year, M.director, M.rating, " +
-                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name SEPARATOR ', '), ']') AS genres, " +
-                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name)), ']') AS stars " +
-                           "FROM ( " +
-                           "    SELECT M.id, M.title, M.year, M.director, R.rating " +
-                           "    FROM movies AS M " +
-                           "    LEFT JOIN ratings R ON M.id = R.movieId " +
-                           "    ORDER BY R.rating DESC " +
-                           "    LIMIT 20" +
-                           ") AS M " +
+            String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name ORDER BY G.name ASC SEPARATOR ', '), ']') AS genres, " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name) ORDER BY S.movie_count DESC, S.name ASC), ']') AS stars " +
+                           "FROM movies AS M " +
                            "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
                            "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
-                           "LEFT JOIN stars AS S ON SIM.starId = S.id " +
-                           "GROUP BY M.id, M.title, M.year, M.director, M.rating " +
-                           "ORDER BY M.rating DESC";
+                           "LEFT JOIN (" +
+                           "    SELECT S.id, S.name, COUNT(SIM.movieId) AS movie_count " +
+                           "    FROM stars_in_movies AS SIM " +
+                           "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                           "    GROUP BY S.id " +
+                           ") AS S ON SIM.starId = S.id " +
+                           "LEFT JOIN ratings AS R ON M.id = R.movieId " +
+                           "WHERE M.id = ? " +
+                           "GROUP BY M.id, M.title, M.year, M.director, R.rating";
 
             PreparedStatement statement = conn.prepareStatement(query);
 
+            statement.setString(1, id);
+
             ResultSet rs = statement.executeQuery();
 
-            JsonArray jsonArray = new JsonArray();
+            JsonObject jsonObject = new JsonObject();
 
-            while (rs.next()) {
-                JsonObject jsonObject = new JsonObject();
-
+            if (rs.next()) {
                 jsonObject.addProperty("id", rs.getString("M.id"));
                 jsonObject.addProperty("title", rs.getString("M.title"));
                 jsonObject.addProperty("year", rs.getString("M.year"));
                 jsonObject.addProperty("director", rs.getString("M.director"));
-                jsonObject.addProperty("rating", rs.getString("M.rating"));
+                jsonObject.addProperty("rating", rs.getString("R.rating"));
 
                 JsonArray genresArray = JsonParser.parseString(rs.getString("genres")).getAsJsonArray();
                 jsonObject.add("genres", genresArray);
 
                 JsonArray starsArray = JsonParser.parseString(rs.getString("stars")).getAsJsonArray();
                 jsonObject.add("stars", starsArray);
-
-                jsonArray.add(jsonObject);
             }
 
             rs.close();
             statement.close();
 
-            out.write(jsonArray.toString());
+            out.write(jsonObject.toString());
             response.setStatus(200);
 
         } catch (Exception e) {
@@ -94,7 +94,6 @@ public class TopRatedServlet extends HttpServlet {
 
             request.getServletContext().log("Error:", e);
             response.setStatus(500);
-
         } finally {
             out.close();
         }

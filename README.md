@@ -10,12 +10,12 @@ The second project extends the first project and implements the login page, sear
   * Unauthenticated users redirected from protected resources to login page
 * Main Page
   * Search movies based on title, year, director, and star name
-  * ``SearchServlet`` uses substring matching for title, director, and star name
+  * ``customers.SearchServlet`` uses substring matching for title, director, and star name
     * ``AND M.title LIKE %<title>%``
     * ``AND M.director LIKE %<director>%``
     * ``AND S.name LIKE %<name>%``
   * Browse movies based on genre and prefix
-  * ``BrowseServlet`` uses substring matching for prefixes
+  * ``customers.BrowseServlet`` uses substring matching for prefixes
     * ``WHERE M.title LIKE <prefix>%``
 * Movie List Page
   * First three genres sorted by alphabetical order

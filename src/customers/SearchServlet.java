@@ -1,3 +1,5 @@
+package customers;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -20,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "BrowseServlet", urlPatterns = "/api/browse")
-public class BrowseServlet extends HttpServlet {
+@WebServlet(name = "customers.SearchServlet", urlPatterns = "/api/search")
+public class SearchServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     private DataSource dataSource;
@@ -51,27 +53,33 @@ public class BrowseServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
-        String genre = request.getParameter("genre");
-        String prefix = request.getParameter("prefix");
+        String title = request.getParameter("title");
+        String year = request.getParameter("year");
+        String director = request.getParameter("director");
+        String star = request.getParameter("star");
         String sort = request.getParameter("sort");
         String page = request.getParameter("page");
         String size = request.getParameter("pageSize");
 
-        String trimmedGenre = (genre == null) ? null : genre.trim();
-        String trimmedPrefix = (prefix == null) ? null : prefix.trim();
+        String trimmedTitle = (title == null) ? null : title.trim();
+        String trimmedYear = (year == null) ? null : year.trim();
+        String trimmedDirector = (director == null) ? null : director.trim();
+        String trimmedStar = (star == null) ? null : star.trim();
         String trimmedPage = (page == null) ? null : page.trim();
         String trimmedSize = (size == null) ? null : size.trim();
 
-        boolean hasGenre = (trimmedGenre != null && !trimmedGenre.isEmpty());
-        boolean hasPrefix = (trimmedPrefix != null && !trimmedPrefix.isEmpty());
+        boolean hasTitle = (trimmedTitle != null && !trimmedTitle.isEmpty());
+        boolean hasYear = (trimmedYear != null && !trimmedYear.isEmpty());
+        boolean hasDirector = (trimmedDirector != null && !trimmedDirector.isEmpty());
+        boolean hasStar = (trimmedStar != null && !trimmedStar.isEmpty());
         boolean hasPage = (trimmedPage != null && !trimmedPage.isEmpty());
         boolean hasSize = (trimmedSize != null && !trimmedSize.isEmpty());
 
         PrintWriter out = response.getWriter();
 
-        if (!hasGenre && !hasPrefix) {
+        if (!hasTitle && !hasYear && !hasDirector && !hasStar) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("message", "Please provide a search parameter");
+            jsonObject.addProperty("message", "Please provide at least one search parameter");
             out.write(jsonObject.toString());
 
             response.setStatus(400);
@@ -123,26 +131,35 @@ public class BrowseServlet extends HttpServlet {
                            "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
                            "    GROUP BY S.id " +
                            ") AS S ON SIM.starId = S.id " +
-                           "LEFT JOIN ratings AS R ON R.movieId = M.id ";
+                           "LEFT JOIN ratings AS R ON R.movieId = M.id " +
+                           "WHERE 1 = 1 ";
 
             List<Object> params = new ArrayList<>();
 
-            if (hasGenre) {
-                query += "WHERE EXISTS ( " +
+            if (hasTitle) {
+                query += "AND M.title LIKE ? ";
+                params.add("%" + trimmedTitle + "%");
+            }
+
+            if (hasYear) {
+                query += "AND M.year = ? ";
+                params.add(Integer.parseInt(trimmedYear));
+            }
+
+            if (hasDirector) {
+                query += "AND M.director LIKE ? ";
+                params.add("%" + trimmedDirector + "%");
+            }
+
+            if (hasStar) {
+                query += "AND EXISTS (" +
                          "    SELECT 1 " +
-                         "    FROM genres_in_movies AS GIM " +
-                         "    LEFT JOIN genres AS G ON GIM.genreId = G.id " +
-                         "    WHERE GIM.movieId = M.id" +
-                         "    AND G.name = ? " +
+                         "    FROM stars_in_movies AS SIM " +
+                         "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                         "    WHERE SIM.movieId = M.id " +
+                         "    AND S.name LIKE ? " +
                          ") ";
-                params.add(trimmedGenre);
-
-            } else if (!trimmedPrefix.equals("*")) {
-                query += "WHERE M.title LIKE ? ";
-                params.add(trimmedPrefix + "%");
-
-            } else {
-                query += "WHERE M.title REGEXP '^[^a-z0-9]' ";
+                params.add("%" + trimmedStar + "%");
             }
 
             query += "GROUP BY M.id, M.title, M.year, M.director, R.rating ";
@@ -173,7 +190,7 @@ public class BrowseServlet extends HttpServlet {
                     break;
 
                 case SORT_RATING_DESC_TITLE_DESC:
-                    query += "ORDER BY R.rating DESC, M.title DESC";
+                    query += "ORDER BY R.rating DESC, M.title DESC ";
                     break;
 
                 default:
@@ -187,7 +204,6 @@ public class BrowseServlet extends HttpServlet {
             params.add(offset);
 
             PreparedStatement statement = conn.prepareStatement(query);
-
             for (int i = 0; i < params.size(); ++i) {
                 statement.setObject(i + 1, params.get(i));
             }
