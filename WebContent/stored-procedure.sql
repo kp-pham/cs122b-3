@@ -11,25 +11,23 @@ BEGIN
     DECLARE star_id VARCHAR(10);
     DECLARE genre_id INTEGER;
 
-    IF NOT EXISTS (SELECT 1 FROM stars WHERE name = star_name) THEN
-       SET star_id = CALL get_next_star_id();
-       INSERT INTO stars (id, name, birthYear) VALUES ( star_id, star_name, NULL);
+    IF star_name IS NOT NULL THEN
+
+       SELECT id INTO star_id FROM stars WHERE name = star_name LIMIT 1;
+
+        IF star_id IS NULL THEN
+           SET star_id = CALL get_next_star_id();
+           INSERT INTO stars (id, name, birthYear) VALUES ( star_id, star_name, NULL);
+        END IF;
+
+
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM genres WHERE name = genre_name) THEN
        SET genre_id = CALL get_next_genre_id();
        INSERT INTO genres (id, name) VALUES (genre_id, genre_name);
     END IF;
-
-
---     IF star_name IS NOT NULL THEN
---         IF EXISTS (SELECT 1 FROM stars WHERE name = star_name) THEN
---
---         ELSE
---
---         END IF;
---     END IF;
-END
+END;
 
 CREATE PROCEDURE get_next_star_id(OUT star_id VARCHAR(10))
 BEGIN
