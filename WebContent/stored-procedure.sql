@@ -15,7 +15,9 @@ BEGIN
     SET movie_id = CALL get_next_movie_id(movie_id);
 
     IF star_name IS NOT NULL THEN
+        SET star_id = NULL;
         SELECT id INTO star_id FROM stars WHERE name = star_name LIMIT 1;
+
         IF star_id IS NULL THEN
            SET star_id = CALL get_next_star_id(star_id);
            INSERT INTO stars (id, name, birthYear) VALUES ( star_id, star_name, NULL);
@@ -25,6 +27,7 @@ BEGIN
     END IF;
 
     IF genre_name IS NOT NULL THEN
+        SET genre_id = NULL;
         SELECT id INTO genre_id FROM genres WHERE name = genre_name LIMIT 1;
 
         IF genre_id IS NOT NULL THEN
