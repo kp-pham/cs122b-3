@@ -36,6 +36,15 @@ BEGIN
     SET star_id = CONCAT(prefix, number + 1);
 END;
 
+CREATE PROCEDURE get_next_genre_id(OUT genre_id INTEGER)
+BEGIN
+    DECLARE id INTEGER;
+
+    SELECT MAX(id) INTO id FROM genres;
+
+    SET genre_id = id + 1;
+END;
+
 $$
 
 DELIMITER ;
