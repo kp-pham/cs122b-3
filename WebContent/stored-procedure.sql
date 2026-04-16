@@ -8,11 +8,13 @@ CREATE PROCEDURE add_movie (
     IN genre_name VARCHAR(32),
 )
 BEGIN
+    DECLARe movie_id VARCHAR(10);
     DECLARE star_id VARCHAR(10);
     DECLARE genre_id INTEGER;
 
-    IF star_name IS NOT NULL THEN
+    SET movie_id = CALL get_next_movie_id();
 
+    IF star_name IS NOT NULL THEN
        SELECT id INTO star_id FROM stars WHERE name = star_name LIMIT 1;
 
         IF star_id IS NULL THEN
@@ -27,6 +29,20 @@ BEGIN
        SET genre_id = CALL get_next_genre_id();
        INSERT INTO genres (id, name) VALUES (genre_id, genre_name);
     END IF;
+END;
+
+CREATE PROCEDURE get_next_movie_id(OUT movie_id VARCHAR(10))
+BEGIN
+    DECLARE id VARCHAR(10);
+    DECLARE prefix VARCHAR(10);
+    DECLARE number VARCHAR(10);
+
+    SELECT MAX(id) INTO id FROM movies;
+
+    SET prefix = REGEXP_REPLACE(id, [0-9], "");
+    SET number = REGEXP_REPLACE(id, [a-zA-z], "");
+
+    SET movie_id = CONCAT(prefix, number + 1);
 END;
 
 CREATE PROCEDURE get_next_star_id(OUT star_id VARCHAR(10))
