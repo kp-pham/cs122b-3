@@ -2,8 +2,6 @@ const starsForm = $("#stars-form");
 const alertSuccess  = $("#alert-success");
 const alertFailure = $("#alert-failure");
 
-const baseURL = window.location.origin + '/' + window.location.pathname.split('/')[1];
-
 function handleSuccess() {
     alertFailure.addClass("d-none");
 
