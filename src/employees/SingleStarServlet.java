@@ -83,13 +83,15 @@ public class SingleStarServlet extends HttpServlet {
         }
 
         try (Connection conn = dataSource.getConnection()) {
+            String id = getId(conn);
+
             String query = "INSERT INTO (id, name, birthYear) VALUES (?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(query);
 
             statement.setString(1, id);
             statement.setString(2, name);
 
-            if (birthYear == null || birthYear.isEmpty()) {
+            if (birthYear == null) {
                 statement.setNull(3, Types.INTEGER);
             } else {
                 statement.setInt(3, birthYear);
@@ -107,6 +109,19 @@ public class SingleStarServlet extends HttpServlet {
 
         } finally {
             out.close();
+        }
+    }
+
+    private String getId(java.sql.Connection conn) throws Exception {
+        String query = "SELECT MAX(id) AS id FROM stars";
+        PreparedStatement statement = conn.prepareStatement(query);
+
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("id");
+        } else {
+            throw new Exception("Something went wrong. Please try again.");
         }
     }
 }
