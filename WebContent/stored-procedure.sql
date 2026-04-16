@@ -12,6 +12,11 @@ BEGIN
     DECLARE star_id VARCHAR(10);
     DECLARE genre_id INTEGER;
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
     START TRANSACTION;
 
     CALL get_next_movie_id(movie_id);
@@ -34,7 +39,7 @@ IF star_name IS NOT NULL THEN
         SET genre_id = NULL;
         SELECT id INTO genre_id FROM genres WHERE name = genre_name LIMIT 1;
 
-        IF genre_id IS NOT NULL THEN
+        IF genre_id IS NULL THEN
            CALL get_next_genre_id(genre_id);
            INSERT INTO genres (id, name) VALUES (genre_id, genre_name);
         END IF;
