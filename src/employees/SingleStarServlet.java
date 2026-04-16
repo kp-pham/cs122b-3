@@ -134,7 +134,13 @@ public class SingleStarServlet extends HttpServlet {
         ResultSet rs = statement.executeQuery();
 
         if (rs.next()) {
-            return rs.getString("id");
+            String id = rs.getString("id");
+
+            String string = id.replaceAll("\\d", "");
+            int number = Integer.parseInt(id.replaceAll("[a-zA-z]", ""));
+
+            return string + (number + 1);
+
         } else {
             throw new Exception("Something went wrong. Please try again.");
         }
