@@ -9,11 +9,19 @@ CREATE PROCEDURE add_movie (
 )
 BEGIN
     DECLARE star_id VARCHAR(10);
+    DECLARE genre_id INTEGER;
 
     IF NOT EXISTS (SELECT 1 FROM stars WHERE name = star_name) THEN
        SET star_id = CALL get_next_star_id();
        INSERT INTO stars (id, name, birthYear) VALUES ( star_id, star_name, NULL);
     END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM genres WHERE name = genre_name) THEN
+       SET genre_id = CALL get_next_genre_id();
+       INSERT INTO genres (id, name) VALUES (genre_id, genre_name);
+    END IF;
+
+
 --     IF star_name IS NOT NULL THEN
 --         IF EXISTS (SELECT 1 FROM stars WHERE name = star_name) THEN
 --
