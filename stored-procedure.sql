@@ -7,7 +7,7 @@ CREATE PROCEDURE add_movie (
     IN star_name VARCHAR(100),
     IN genre_name VARCHAR(32)
 )
-BEGIN
+add_movie: BEGIN
     DECLARE duplicate_movie_id VARCHAR(10);
     DECLARE movie_id VARCHAR(10);
     DECLARE star_id VARCHAR(10);
@@ -21,11 +21,19 @@ BEGIN
 
     START TRANSACTION;
 
+    CALL get_duplicate_movie_id(title, year, director, duplicate_movie_id);
+
+    IF duplicate_movie_id IS NOT NULL THEN:
+        SELECT "Movie already exists. No changes made." AS message;
+        ROLLBACK;
+        LEAVE add_movie;
+    END IF;
+
     CALL get_next_movie_id(movie_id);
 
     INSERT INTO movies (id, title, year, director) VALUES (movie_id, title, year, director);
 
-IF star_name IS NOT NULL THEN
+    IF star_name IS NOT NULL THEN
         SET star_id = NULL;
         SELECT id INTO star_id FROM stars WHERE name = star_name LIMIT 1;
 
@@ -50,7 +58,7 @@ IF star_name IS NOT NULL THEN
     END IF;
 
     COMMIT;
-END;
+END add_movie;
 
 CREATE PROCEDURE get_duplicate_movie_id(
     IN _title VARCHAR(100),
@@ -63,7 +71,8 @@ BEGIN
     FROM movies
     WHERE title = _title
     AND year = _year
-    AND director = _director;
+    AND director = _director
+    LIMIT 1;
 END
 
 CREATE PROCEDURE get_next_movie_id(OUT movie_id VARCHAR(10))
@@ -78,7 +87,7 @@ BEGIN
     SET number = REGEXP_REPLACE(id, [a-zA-z], "");
 
     SET movie_id = CONCAT(prefix, number + 1);
-END;
+END proc;
 
 CREATE PROCEDURE get_next_star_id(OUT star_id VARCHAR(10))
 BEGIN
