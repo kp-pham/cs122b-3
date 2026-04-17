@@ -44,6 +44,6 @@ let movieId = getParameterByName('id')
 jQuery.ajax({
     dataType: "json",
     method: "GET",
-    url: "api/single-movie?id=" + movieId,
+    url: "api/customers/movie?id=" + movieId,
     success: (resultData) => handleResult(resultData)
 })
