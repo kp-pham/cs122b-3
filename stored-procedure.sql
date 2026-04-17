@@ -8,6 +8,7 @@ CREATE PROCEDURE add_movie (
     IN genre_name VARCHAR(32)
 )
 BEGIN
+    DECLARE duplicate_movie_id VARCHAR(10);
     DECLARE movie_id VARCHAR(10);
     DECLARE star_id VARCHAR(10);
     DECLARE genre_id INTEGER;
@@ -50,6 +51,20 @@ IF star_name IS NOT NULL THEN
 
     COMMIT;
 END;
+
+CREATE PROCEDURE get_duplicate_movie_id(
+    IN _title VARCHAR(100),
+    IN _year INTEGER,
+    IN _director VARCHAR(100),
+    OUT duplicate_movie_id VARCHAR(10)
+)
+BEGIN
+    SELECT id INTO duplicate_movie_id
+    FROM movies
+    WHERE title = _title
+    AND year = _year
+    AND director = _director;
+END
 
 CREATE PROCEDURE get_next_movie_id(OUT movie_id VARCHAR(10))
 BEGIN
