@@ -132,7 +132,7 @@ public class SingleMovieServlet extends HttpServlet {
                 default:
                     String movieId = rs.getString("movieId");
                     String starId = rs.getString("starId");
-                    String genreId = rs.getString("genreId");
+                    int genreId = rs.getInt("genreId");
 
                     JsonObject movie = new JsonObject();
                     movie.addProperty("id", movieId);
