@@ -59,7 +59,7 @@ add_movie: BEGIN
 
     COMMIT;
 
-    SELECT "SUCCESS" AS message;
+    SELECT "SUCCESS" AS message, movie_id AS movieId, star_id AS starId, genre_id AS genreId;
 END add_movie;
 
 CREATE PROCEDURE get_duplicate_movie_id(

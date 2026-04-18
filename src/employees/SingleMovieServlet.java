@@ -119,28 +119,52 @@ public class SingleMovieServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("message", rs.getString("message"));
 
-            out.write(jsonObject.toString());
-
             switch (message) {
                 case ROLLED_BACK:
+                    jsonObject.addProperty("message", "Something went wrong. Please try again.");
                     response.setStatus(500);
                     break;
 
                 case DUPLICATE_MOVIE:
+                    jsonObject.addProperty("message", "Movie already exists.");
                     response.setStatus(409);
                     break;
 
                 default:
-                    response.setStatus(200);
+                    String movieId = rs.getString("movieId");
+                    String starId = rs.getString("starId");
+                    String genreId = rs.getString("genreId");
+
+                    JsonObject movie = new JsonObject();
+                    movie.addProperty("id", movieId);
+                    movie.addProperty("title", trimmedTitle);
+                    movie.addProperty("year", releaseYear);
+                    movie.addProperty("director", trimmedDirector);
+
+                    JsonArray genresArray = new JsonArray();
+                    genresArray.add(trimmedGenreName);
+
+                    jsonObject.add("genres", genresArray);
+
+                    JsonArray starsArray = new JsonArray();
+                    starsArray.add(trimmedStarName);
+
+                    jsonObject.add("stars", starsArray);
+
+                    jsonObject.addProperty("message", String.format("Movie added. movieId: %s starId: %s genreId: %d", movieId, starId, genreId));
+                    response.setStatus(201);
+                    response.setHeader("Location", "/api/customers/movie?id=" + movieId);
                     break;
             }
+
+            out.write(jsonObject.toString());
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("message", e.getMessage());
             out.write(jsonObject.toString());
 
-            request.getServletContext().log("", e);
+            request.getServletContext().log("Error: ", e);
             response.setStatus(500);
 
         } finally {

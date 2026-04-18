@@ -112,7 +112,7 @@ public class SingleStarServlet extends HttpServlet {
             out.write(jsonObject.toString());
 
             response.setStatus(201);
-            response.setHeader("Location", "/api/customers/star?=id=" + id);
+            response.setHeader("Location", "/api/customers/star?id=" + id);
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
