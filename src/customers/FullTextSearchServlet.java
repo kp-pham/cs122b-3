@@ -52,6 +52,19 @@ public class FullTextSearchServlet extends HttpServlet {
             return;
         }
 
+        try (Connection conn = dataSource.getConnection()) {
+            String query = "SELECT entryID, entry FROM ft WHERE MATCH (entry) AGAINST (? IN BOOLEAN MODE)";
 
+        } catch (Exception e) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", e.getMessage());
+            out.write(jsonObject.toString());
+
+            request.getServletContext().log("Error:", e);
+            response.setStatus(500);
+
+        } finally {
+            out.close();
+        }
     }
 }
