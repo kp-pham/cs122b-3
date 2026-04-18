@@ -113,6 +113,8 @@ public class SingleMovieServlet extends HttpServlet {
             }
 
             ResultSet rs = statement.executeQuery();
+            rs.next();
+
             String message = rs.getString("message");
 
             JsonObject jsonObject = new JsonObject();
