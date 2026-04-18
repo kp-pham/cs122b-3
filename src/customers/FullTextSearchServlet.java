@@ -55,6 +55,8 @@ public class FullTextSearchServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT entryID, entry FROM ft WHERE MATCH (entry) AGAINST (? IN BOOLEAN MODE)";
 
+
+
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("message", e.getMessage());

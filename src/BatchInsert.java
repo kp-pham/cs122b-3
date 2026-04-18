@@ -42,7 +42,8 @@ public class BatchInsert {
 
         int[] iNoRows = null;
 
-        sqlInsertRecord = "INSERT INTO ft (entryID, entry) values (?, ?)";
+        sqlInsertRecord = "INSERT INTO ft (entry) values (?)";
+
         try {
 			conn.setAutoCommit(false);
 
@@ -56,7 +57,7 @@ public class BatchInsert {
                 psInsertRecord.addBatch();
             }
 
-			iNoRows=psInsertRecord.executeBatch();
+			iNoRows = psInsertRecord.executeBatch();
 			conn.commit();
 
         } catch (SQLException e) {
@@ -64,8 +65,8 @@ public class BatchInsert {
         }
 
         try {
-            if(psInsertRecord!=null) psInsertRecord.close();
-            if(conn!=null) conn.close();
+            if(psInsertRecord != null) psInsertRecord.close();
+            if(conn != null) conn.close();
         } catch(Exception e) {
             e.printStackTrace();
         }
