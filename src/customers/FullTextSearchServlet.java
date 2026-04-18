@@ -53,22 +53,22 @@ public class FullTextSearchServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
-        String title = request.getParameter("q");
+        String q = request.getParameter("q");
         String sort = request.getParameter("sort");
         String page = request.getParameter("page");
         String size = request.getParameter("pageSize");
 
-        String trimmedTitle = (title == null) ? null : title.trim();
+        String trimmedQuery = (q == null) ? null : q.trim();
         String trimmedPage = (page == null) ? null : page.trim();
         String trimmedSize = (size == null) ? null : size.trim();
 
-        boolean hasTitle = (trimmedTitle != null && !trimmedTitle.isEmpty());
+        boolean hasQuery = (trimmedQuery != null && !trimmedQuery.isEmpty());
         boolean hasPage = (trimmedPage != null && !trimmedPage.isEmpty());
         boolean hasSize = (trimmedSize != null && !trimmedSize.isEmpty());
 
         PrintWriter out = response.getWriter();
 
-        if (!hasTitle) {
+        if (!hasQuery) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("message", "Please enter a search term.");
             out.write(jsonObject.toString());
