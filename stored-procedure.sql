@@ -91,8 +91,8 @@ BEGIN
 
     SELECT MAX(id) INTO id FROM movies;
 
-    SET prefix = REGEXP_REPLACE(id, [0-9], "");
-    SET number = REGEXP_REPLACE(id, [a-zA-z], "");
+    SET prefix = REGEXP_REPLACE(id, "[0-9]", "");
+    SET number = REGEXP_REPLACE(id, "[a-zA-z]", "");
 
     SET movie_id = CONCAT(prefix, number + 1);
 END$$
@@ -105,8 +105,8 @@ BEGIN
 
     SELECT MAX(id) INTO id FROM stars;
 
-    SET prefix = REGEXP_REPLACE(id, [0-9], "");
-    SET number = REGEXP_REPLACE(id, [a-zA-z], "");
+    SET prefix = REGEXP_REPLACE(id, "[0-9]", "");
+    SET number = REGEXP_REPLACE(id, "[a-zA-z]", "");
 
     SET star_id = CONCAT(prefix, number + 1);
 END$$
