@@ -53,8 +53,24 @@ public class FullTextSearchServlet extends HttpServlet {
         }
 
         try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT entryID, entry FROM ft WHERE MATCH (entry) AGAINST (? IN BOOLEAN MODE)";
+            String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name ORDER BY G.name ASC SEPARATOR ', '), ']') AS genres, " +
+                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name) ORDER BY S.movie_count DESC, S.name ASC), ']') AS stars " +
+                           "FROM movies AS M " +
+                           "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
+                           "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
+                           "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
+                           "LEFT JOIN (" +
+                           "    SELECT S.id, S.name, COUNT(SIM.movieId) AS movie_count " +
+                           "    FROM stars_in_movies AS SIM " +
+                           "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                           "    GROUP BY S.id " +
+                           ") AS S ON SIM.starId = S.id " +
+                           "LEFT JOIN ratings AS R ON R.movieId = M.id " +
+                           "WHERE MATCH (M.title) AGAINST (? IN BOOLEAN MODE) " +
+                           "GROUP BY M.id, M.title, M.year, M.director, R.rating ";
 
+            PreparedStatement statement = conn.prepareStatement(query);
 
 
         } catch (Exception e) {
