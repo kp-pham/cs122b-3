@@ -89,15 +89,15 @@ END$$
 
 CREATE PROCEDURE get_next_movie_id(OUT movie_id VARCHAR(10))
 BEGIN
-    DECLARE id VARCHAR(10);
+    DECLARE max_id VARCHAR(10);
     DECLARE prefix VARCHAR(10);
     DECLARE postfix VARCHAR(10);
     DECLARE number INTEGER;
 
-    SELECT MAX(id) INTO id FROM movies;
+    SELECT MAX(id) INTO max_id FROM movies;
 
-    SET prefix = REGEXP_REPLACE(id, "[0-9]", "");
-    SET postfix = REGEXP_REPLACE(id, "[^0-9]", "");
+    SET prefix = REGEXP_REPLACE(max_id, "[0-9]", "");
+    SET postfix = REGEXP_REPLACE(max_id, "[^0-9]", "");
     SET number = CAST(postfix AS UNSIGNED) + 1;
 
     SET movie_id = CONCAT(prefix, LPAD(number, LENGTH(postfix), "0"));
@@ -105,15 +105,15 @@ END$$
 
 CREATE PROCEDURE get_next_star_id(OUT star_id VARCHAR(10))
 BEGIN
-    DECLARE id VARCHAR(10);
+    DECLARE max_id VARCHAR(10);
     DECLARE prefix VARCHAR(10);
     DECLARE postfix VARCHAR(10);
     DECLARE number INTEGER;
 
-    SELECT MAX(id) INTO id FROM stars;
+    SELECT MAX(id) INTO max_id FROM stars;
 
-    SET prefix = REGEXP_REPLACE(id, "[0-9]", "");
-    SET postfix = REGEXP_REPLACE(id, "[^0-9]", "");
+    SET prefix = REGEXP_REPLACE(max_id, "[0-9]", "");
+    SET postfix = REGEXP_REPLACE(max_id, "[^0-9]", "");
     SET number = CAST(postfix AS UNSIGNED) + 1;
 
     SET star_id = CONCAT(prefix, LPAD(number, LENGTH(postfix), "0"));
@@ -121,11 +121,11 @@ END$$
 
 CREATE PROCEDURE get_next_genre_id(OUT genre_id INTEGER)
 BEGIN
-    DECLARE id INTEGER;
+    DECLARE max_id INTEGER;
 
-    SELECT MAX(id) INTO id FROM genres;
+    SELECT MAX(id) INTO max_id FROM genres;
 
-    SET genre_id = id + 1;
+    SET genre_id = max_id + 1;
 END$$
 
 DELIMITER ;
