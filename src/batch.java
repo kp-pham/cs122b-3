@@ -13,12 +13,12 @@ public class BatchInsert {
         Class.forName(System.getenv("JDBC_DRIVER"));
         Connection conn = DriverManager.getConnection(url, username, password);
 
-        String query = "DROP TABLE IF EXISTS ft;" +
-                       "CREATE TABLE ft (" +
-                       "    entryID INT AUTO_INCREMENT," +
-                       "    entry text," +
-                       "    PRIMARY KEY (entryID)," +
-                       "    FULLTEXT (entry)) ENGINE=MyISAM";
+        String query = "INSERT INTO ft (entryID, entry) VALUES (?, ?)";
 
+        try {
+
+        } catch (Exception e) {
+
+        }
     }
 }
