@@ -21,9 +21,10 @@ function handleFormSubmit(formSubmitEvent) {
     formSubmitEvent.preventDefault();
 
     $.ajax({
-        url: baseURL + "/api/employees/movie",
+        dataType: "json",
         method: "POST",
         data: moviesForm.serialize(),
+        url: baseURL + "/api/employees/movie",
         success: (resultData) => handleSuccess(resultData),
         error: (jqXHR) => handleFailure(jqXHR)
     });
