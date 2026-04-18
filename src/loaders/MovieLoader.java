@@ -18,6 +18,10 @@ public class MovieLoader implements DataLoader {
         try (BufferedReader reader = new BufferedReader(new FileReader("movies.csv"))) {
             String header = reader.readLine();
 
+            if (header == null) {
+                return Set.of();
+            }
+
             String line;
             while ((line = reader.readLine()) != null) {
 
