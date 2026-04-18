@@ -11,6 +11,8 @@ public class MovieLoader implements DataLoader {
     private final Connection conn;
     private final Set<String> movieIds;
 
+    private final int EXPECTED_FIELDS_LENGTH = 4;
+
     public MovieLoader(Connection conn) {
         this.conn = conn;
         this.movieIds = new HashSet<String>();
@@ -43,8 +45,24 @@ public class MovieLoader implements DataLoader {
                 fields[3].equalsIgnoreCase("director");
     }
 
-    private void process(String[] fields) {
+    private void process(String line, String[] fields) {
+        if (!validFields(fields)) {
+            System.out.printf("ERROR: Incorrect number of fields | Expected %d, Received %d%n", EXPECTED_FIELDS_LENGTH, fields.length);
+        }
 
+        for (int i = 0; i < fields.length; ++i) {
+            fields[i] = fields[i].trim();
+        }
+
+        // Length 4
+        // Id is non null and nonempty and unique
+        // Title is non null and nonempty
+        // Year is non null and non empty and valid integer
+        // Director is non null and non empty
+    }
+
+    private boolean validFields(String[] fields) {
+        return fields.length == EXPECTED_FIELDS_LENGTH;
     }
 
     private boolean validId(String id) {
