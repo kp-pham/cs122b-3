@@ -48,7 +48,7 @@ public class MovieLoader implements DataLoader {
 
     private void process(String[] fields) {
         if (!validFields(fields)) {
-            System.out.printf("Expected %d fields, Received %d fields: %s", EXPECTED_FIELDS_LENGTH, fields.length, String.join(", ", fields));
+            System.out.printf("Expected %d fields, Received %d fields: %s\n", EXPECTED_FIELDS_LENGTH, fields.length, String.join(", ", fields));
         }
 
         for (int i = 0; i < fields.length; ++i) {
@@ -58,13 +58,13 @@ public class MovieLoader implements DataLoader {
         String id = fields[0], title = fields[1], year = fields[2], director = fields[3];
 
         if (!validId(id)) {
-            System.out.printf("Invalid id: %s", String.join(", ", fields));
+            System.out.printf("Invalid id: %s\n", String.join(", ", fields));
         } else if (!validTitle(title)) {
-            System.out.printf("Invalid title: %s", String.join(",", fields));
+            System.out.printf("Invalid title: %s\n", String.join(",", fields));
         } else if (!validYear(year)) {
-            System.out.printf("Invalid year: %s", String.join(",", fields));
+            System.out.printf("Invalid year: %s\n", String.join(",", fields));
         } else if (!validDirector(director)) {
-            System.out.printf("Invalid director: %s", String.join(",", fields));
+            System.out.printf("Invalid director: %s\n", String.join(",", fields));
         }
         // Length 4
         // Id is non null and nonempty and unique
