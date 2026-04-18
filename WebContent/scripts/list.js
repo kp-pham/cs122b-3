@@ -96,6 +96,7 @@ function showResults() {
         const title = getParameterByName("title");
         const year = getParameterByName("year");
         const director = getParameterByName("director");
+        const query = getParameterByName("q");
         const star = getParameterByName("star");
         const sort = getParameterByName("sort") || "title-asc-rating-desc";
         const page = getParameterByName("page") || 1;
@@ -113,6 +114,14 @@ function showResults() {
             state = {
                 type: "browse",
                 prefix: prefix,
+                sort: sort,
+                page: page,
+                pageSize: pageSize
+            }
+        } else if (query != null) {
+            state = {
+                type: "full-text",
+                title: title,
                 sort: sort,
                 page: page,
                 pageSize: pageSize

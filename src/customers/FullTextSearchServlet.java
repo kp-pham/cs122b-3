@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "customers.FullTextSearchServlet", urlPatterns = "/api/customers/full-text")
+@WebServlet(name = "customers.FullTextSearchServlet", urlPatterns = "/api/full-text")
 public class FullTextSearchServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
@@ -53,7 +53,7 @@ public class FullTextSearchServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
 
-        String title = request.getParameter("title");
+        String title = request.getParameter("q");
         String sort = request.getParameter("sort");
         String page = request.getParameter("page");
         String size = request.getParameter("pageSize");
