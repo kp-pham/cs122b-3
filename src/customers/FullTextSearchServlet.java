@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet(name = "customers.SearchServlet", urlPatterns = "/api/customers/full-text")
-public class FullTextSearchServlet {
+@WebServlet(name = "customers.FullTextSearchServlet", urlPatterns = "/api/customers/full-text")
+public class FullTextSearchServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
     private DataSource dataSource;
@@ -34,5 +34,24 @@ public class FullTextSearchServlet {
         } catch (NamingException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
+        String title = request.getParameter("title");
+
+        PrintWriter out = response.getWriter();
+
+        if (title == null || title.trim().isEmpty()) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", "Please enter a search term.");
+            out.write(jsonObject.toString());
+
+            response.setStatus(400);
+            return;
+        }
+
+
     }
 }
