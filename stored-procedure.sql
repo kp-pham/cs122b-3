@@ -18,6 +18,7 @@ add_movie: BEGIN
     DECLARE movie_id VARCHAR(10);
     DECLARE star_id VARCHAR(10);
     DECLARE genre_id INTEGER;
+    DECLARE price DECIMAL(10, 2);
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -40,8 +41,9 @@ add_movie: BEGIN
     START TRANSACTION;
 
     CALL get_next_movie_id(movie_id);
+    CALL get_price(price);
 
-    INSERT INTO movies (id, title, year, director) VALUES (movie_id, title, year, director);
+    INSERT INTO movies (id, title, year, director, price) VALUES (movie_id, title, year, director, price);
 
     IF star_name IS NOT NULL THEN
         SET star_id = NULL;
@@ -101,6 +103,11 @@ BEGIN
     SET number = CAST(postfix AS UNSIGNED) + 1;
 
     SET movie_id = CONCAT(prefix, LPAD(number, LENGTH(postfix), "0"));
+END$$
+
+CREATE PROCEDURE get_price(OUT price DECIMAL(10, 2))
+BEGIN
+    SET price = FLOOR(1 + RAND() * 30) + ELT(FLOOR(1 + RAND() * 3), 0.99, 0.49, 0.00);
 END$$
 
 CREATE PROCEDURE get_next_star_id(OUT star_id VARCHAR(10))
