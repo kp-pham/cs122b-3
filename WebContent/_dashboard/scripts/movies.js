@@ -12,7 +12,7 @@ function handleSuccess(resultData) {
 function handleFailure(jqXHR) {
     alertSuccess.addClass("d-none");
 
-    const message = jqXHR.response?.message ?? jqXHR.responseText ?? "Something went wrong. Please try again.";
+    const message = JSON.parse(jqXHR.responseText).message || "Something went wrong. Please try again.";
     alertFailure.text(message);
     alertFailure.removeClass("d-none");
 }
