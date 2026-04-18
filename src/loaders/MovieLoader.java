@@ -58,9 +58,9 @@ public class MovieLoader implements DataLoader {
         String id = fields[0], title = fields[1], year = fields[2], director = fields[3];
 
         if (!validId(id)) {
-            System.out.printf("Invalid id. | %s", line);
+            System.out.printf("Invalid id: %s", String.join(", ", fields));
         } else if (!validTitle(title)) {
-            System.out.printf("Invalid title. %s", line);
+            System.out.printf("Invalid title: %s", String.join(",", fields));
         }
         // Length 4
         // Id is non null and nonempty and unique
