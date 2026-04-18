@@ -164,6 +164,14 @@ public class FullTextSearchServlet extends HttpServlet {
 
             String[] tokens = trimmedQuery.split("\\s+");
 
+            StringBuilder logicalOperators = new StringBuilder();
+
+            for (String token : tokens) {
+                logicalOperators.append("+")
+                                .append(token)
+                                .append("*");
+            }
+
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, title);
             statement.setInt(2, pageSize + 1);
