@@ -21,25 +21,23 @@ add_movie: BEGIN
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-
         GET DIAGNOSTICS CONDITION 1
             @sqlstate = RETURNED_SQLSTATE,
             @errno = MYSQL_ERRNO,
             @text = MESSAGE_TEXT;
 
         SELECT "ROLLED_BACK" AS message, CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text) AS error;
+        ROLLBACK;
     END;
-
-    START TRANSACTION;
 
     CALL get_duplicate_movie_id(title, year, director, duplicate_movie_id);
 
     IF duplicate_movie_id IS NOT NULL THEN
         SELECT "DUPLICATE_MOVIE" AS message;
-        ROLLBACK;
         LEAVE add_movie;
     END IF;
+
+    START TRANSACTION;
 
     CALL get_next_movie_id(movie_id);
 
