@@ -25,6 +25,10 @@ public class SingleMovieServlet extends HttpServlet {
 
     private DataSource dataSource;
 
+    private final String ROLLED_BACK = "ROLLED_BACK";
+    private final String DUPLICATE_MOVIE = "DUPLICATE_MOVIE";
+    private final String SUCCESS = "SUCCESS";
+
     public void init(ServletConfig config) {
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
@@ -108,6 +112,14 @@ public class SingleMovieServlet extends HttpServlet {
             } else {
                 statement.setNull(5, Types.VARCHAR);
             }
+
+            ResultSet rs = statement.executeQuery();
+            String message = rs.getString("message");
+
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("message", rs.getString("message"));
+
+            response.setStatus(200);
 
         } catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
