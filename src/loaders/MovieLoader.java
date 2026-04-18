@@ -47,7 +47,7 @@ public class MovieLoader implements DataLoader {
 
     private void process(String line, String[] fields) {
         if (!validFields(fields)) {
-            System.out.printf("ERROR: Incorrect number of fields | Expected %d, Received %d%n", EXPECTED_FIELDS_LENGTH, fields.length);
+            System.out.printf("Incorrect number of fields. Expected %d, Received %d%n.", EXPECTED_FIELDS_LENGTH, fields.length);
         }
 
         for (int i = 0; i < fields.length; ++i) {
@@ -66,7 +66,7 @@ public class MovieLoader implements DataLoader {
     }
 
     private boolean validId(String id) {
-
+        return id != null && !id.isEmpty();
     }
 
     private boolean validTitle(String title) {
