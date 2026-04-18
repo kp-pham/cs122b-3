@@ -3,6 +3,7 @@ package loaders;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ public class MovieLoader implements DataLoader {
 
     public MovieLoader(Connection conn) {
         this.conn = conn;
-        this.movieIds = new HashSet<String>();
+        this.movieIds = new HashSet<>();
     }
 
     public Set<String> load(String file) {
@@ -47,7 +48,7 @@ public class MovieLoader implements DataLoader {
                 fields[3].equalsIgnoreCase("director");
     }
 
-    private void process(String[] fields, PreparedStatement statement) throws Exception {
+    private void process(String[] fields, PreparedStatement statement) throws SQLException {
         if (!validFields(fields)) {
             System.out.printf("Expected %d fields, Received %d fields: %s\n", EXPECTED_FIELDS_LENGTH, fields.length, String.join(", ", fields));
         }
@@ -60,6 +61,9 @@ public class MovieLoader implements DataLoader {
 
         if (!validId(id)) {
             System.out.printf("Invalid id: %s\n", String.join(", ", fields));
+
+        } else if (!uniqueId(id)) {
+            System.out.printf("Duplicate movie: %s\n", String.join(", ", fields));
 
         } else if (!validTitle(title)) {
             System.out.printf("Invalid title: %s\n", String.join(",", fields));
@@ -76,12 +80,9 @@ public class MovieLoader implements DataLoader {
             }
 
             statement.addBatch();
+
+            movieIds.add(id);
         }
-        // Length 4
-        // Id is non null and nonempty and unique
-        // Title is non null and nonempty
-        // Year is non null and non empty and valid integer
-        // Director is non null and non empty
     }
 
     private boolean validFields(String[] fields) {
@@ -90,6 +91,10 @@ public class MovieLoader implements DataLoader {
 
     private boolean validId(String id) {
         return id != null && !id.isEmpty();
+    }
+
+    private boolean uniqueId(String id) {
+        return movieIds.contains(id);
     }
 
     private boolean validTitle(String title) {
