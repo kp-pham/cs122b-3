@@ -19,7 +19,25 @@ public class MovieLoader implements DataLoader {
 
     @Override
     public void load(String file) throws Exception {
+        createStagingTable();
+    }
 
+    private void createStagingTable() throws SQLException {
+        String dropQuery = "DROP TABLE IF EXISTS movies_staging";
+        String createQuery = "CREATE TABLE movies_staging(" +
+                             "    id TEXT, " +
+                             "    title TEXT, " +
+                             "    year TEXT, " +
+                             "    director TEXT" +
+                             ")";
+
+        PreparedStatement statement = conn.prepareStatement(dropQuery);
+        statement.executeUpdate();
+
+        statement = conn.prepareStatement(createQuery);
+        statement.executeUpdate();
+
+        statement.close();
     }
 }
 
