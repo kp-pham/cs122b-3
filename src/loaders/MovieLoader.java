@@ -74,14 +74,20 @@ public class MovieLoader implements DataLoader {
     }
 
     private void validateAndTransform() throws SQLException {
-        String query = "WITH cleaned AS ( " +
-                       "    SELECT * FROM movies_staging " +
-                       "    WHERE id IS NOT NULL AND id != '' " +
-                       "    AND title IS NOT NULL and title != '' " +
-                       "    AND year IS NOT NULL AND year != '' AND year REGEXP '^[0-9]+$' " +
-                       "    AND director IS NOT NULL AND director != '' " +
-                       "    GROUP BY id " +
-                       "    HAVING COUNT(*) = 1 " +
+        String query = "WITH deduped AS (" +
+                       "   SELECT id " +
+                       "   FROM movies_staging " +
+                       "   GROUP BY id " +
+                       "   HAVING COUNT(*) = 1 " +
+                       "), " +
+                       "cleaned AS ( " +
+                       "    SELECT S.id, S.title, S.year, S.director " +
+                       "    FROM movies_staging AS S " +
+                       "    INNER JOIN deduped AS D ON D.id = S.id " +
+                       "    WHERE S.id IS NOT NULL AND S.id != '' " +
+                       "    AND S.title IS NOT NULL and S.title != '' " +
+                       "    AND S.year IS NOT NULL AND S.year != '' AND S.year REGEXP '^[0-9]+$' " +
+                       "    AND S.director IS NOT NULL AND S.director != '' " +
                        ") " +
                        "INSERT INTO movies (id, title, year, director, price) " +
                        "SELECT C.id, C.title, CAST(C.year AS UNSIGNED), C.director, " +
