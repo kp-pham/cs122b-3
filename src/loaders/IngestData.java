@@ -1,25 +1,20 @@
 package loaders;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class IngestData {
     public static void main(String[] args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
+        String username = System.getenv("USER");
+        String password = System.getenv("PASSWORD");
+        String url = System.getenv("URL") + "?allowLoadLocalInfile=true";
 
-        System.out.println("File name: ");
-        String filename = scanner.nextLine();
+        Class.forName(System.getenv("JDBC_DRIVER"));
+        Connection conn = DriverManager.getConnection(url, username, password);
 
-        parseCSV(filename);
-    }
+        System.out.println("Loading movies...\n");
 
-    public static void parseCSV(String filename) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MovieLoader movieLoader = new MovieLoader(conn);
+        movieLoader.load("movies.csv");
     }
 }
