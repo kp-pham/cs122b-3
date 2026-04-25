@@ -1,5 +1,5 @@
 package loaders;
 
-public interface DataLoader<T> {
-    T load(String file) throws Exception;
+public interface DataLoader {
+    void load(String file) throws Exception;
 }
