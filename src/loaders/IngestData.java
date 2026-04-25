@@ -12,7 +12,7 @@ public class IngestData {
         Class.forName(System.getenv("JDBC_DRIVER"));
         Connection conn = DriverManager.getConnection(url, username, password);
 
-        System.out.println("Loading movies...\n");
+        System.out.println("Loading movies...");
 
         MovieLoader movieLoader = new MovieLoader(conn);
         movieLoader.load("data/movies.csv");

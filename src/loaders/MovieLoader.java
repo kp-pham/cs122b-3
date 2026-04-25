@@ -18,8 +18,15 @@ public class MovieLoader implements DataLoader {
             conn.setAutoCommit(false);
 
             createStagingTable();
+            System.out.println("Created staging table.");
+
             loadToStaging(file);
+            System.out.println("Loaded data to staging table.");
+
             validateAndTransform();
+            System.out.println("Loaded data to database.");
+
+            System.out.println("Errors reported: ");
             reportErrors();
 
             conn.commit();
@@ -52,7 +59,7 @@ public class MovieLoader implements DataLoader {
     }
 
     private void loadToStaging(String file) throws SQLException {
-        String query = String.format("LOAD DATA LOCAL INFILE '%s' " +
+        String query = String.format("LOAD DATA LOCAL INFILE ? " +
                                      "INTO TABLE movies_staging " +
                                      "FIELDS TERMINATED BY ',' " +
                                      "ENCLOSED BY '\"' " +
@@ -60,7 +67,9 @@ public class MovieLoader implements DataLoader {
                                      "IGNORE 1 ROWS", file);
 
         PreparedStatement statement = conn.prepareStatement(query);
-        statement.executeUpdate(query);
+        statement.setString(1, file);
+
+        statement.executeUpdate();
         statement.close();
     }
 
@@ -106,8 +115,8 @@ public class MovieLoader implements DataLoader {
                        "    ) THEN 'Duplicate in file' " +
                        "    WHEN EXISTS ( " +
                        "        SELECT 1 FROM movies AS M WHERE M.id = S.id " +
-                       "    ) 'Movie already exists in database' " +
-                       "   END AS error" +
+                       "    ) THEN 'Movie already exists in database' " +
+                       "   END AS error " +
                        "FROM movies_staging AS S " +
                        "WHERE id IS NULL OR id = '' " +
                        "OR title IS NULL OR title = '' " +
@@ -117,7 +126,7 @@ public class MovieLoader implements DataLoader {
                        "    SELECT 1 FROM movies AS M WHERE M.id = S.id " +
                        ") " +
                        "OR id IN ( " +
-                       "    SELECT id" +
+                       "    SELECT id " +
                        "    FROM movies_staging " +
                        "    GROUP BY id " +
                        "    HAVING COUNT(*) > 1 " +
@@ -127,7 +136,7 @@ public class MovieLoader implements DataLoader {
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
-            System.out.printf("%s: %s, %s, %s, %s",
+            System.out.printf("%s: %s, %s, %s, %s%n",
                               rs.getString("error"),
                               rs.getString("id"),
                               rs.getString("title"),
@@ -136,6 +145,7 @@ public class MovieLoader implements DataLoader {
             );
         }
 
+        rs.close();
         statement.close();
     }
 }
