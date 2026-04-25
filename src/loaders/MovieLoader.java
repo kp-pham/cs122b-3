@@ -21,6 +21,7 @@ public class MovieLoader implements DataLoader {
     public void load(String file) throws Exception {
         createStagingTable();
         loadToStaging(file);
+        validateAndTransform();
     }
 
     private void createStagingTable() throws SQLException {
@@ -51,6 +52,26 @@ public class MovieLoader implements DataLoader {
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.executeUpdate(query);
+        statement.close();
+    }
+
+    private void validateAndTransform() throws SQLException {
+        String query = "INSERT INTO movies (id, title, year, director, price) " +
+                       "SELECT id, " +
+                       "       title, " +
+                       "       CAST(year AS UNSIGNED), " +
+                       "       director, " +
+                       "       FLOOR(1 + RAND() * 30) + ELT(FLOOR(1 + RAND() * 3), 0.99, 0.49, 0.00) " +
+                       "FROM movies_staging AS S" +
+                       "WHERE id IS NOT NULL AND id != '' " +
+                       "AND title IS NOT NULL AND title != '' " +
+                       "AND year REGEXP '^[0-9]+$' " +
+                       "AND NOT EXISTS ( " +
+                       "    SELECT 1 FROM movies AS M WHERE M.id = S.id " +
+                       ")";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.executeUpdate();
         statement.close();
     }
 }
