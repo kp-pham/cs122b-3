@@ -15,6 +15,8 @@ public class IngestData {
         System.out.println("Loading movies...\n");
 
         MovieLoader movieLoader = new MovieLoader(conn);
-        movieLoader.load("movies.csv");
+        movieLoader.load("data/movies.csv");
+
+        System.out.println("\nLoading movies completed");
     }
 }
