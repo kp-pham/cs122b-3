@@ -24,7 +24,7 @@ public class MovieLoader implements DataLoader {
             System.out.println("Loaded data to staging table.");
 
             validateAndTransform();
-            System.out.println("Loaded data to database.");
+            System.out.println("Loaded data to database.\n");
 
             System.out.println("Errors reported: ");
             reportErrors();
@@ -102,36 +102,30 @@ public class MovieLoader implements DataLoader {
     }
 
     private void reportErrors() throws SQLException {
-        String query = "SELECT *, " +
-                       "CASE " +
-                       "    WHEN id IS NULL OR id = '' THEN 'Invalid or missing id' " +
-                       "    WHEN title IS NULL OR title = '' THEN 'Invalid or missing title' " +
-                       "    WHEN year IS NULL OR year = '' OR year NOT REGEXP '^[0-9]+$' THEN 'Invalid or missing year' " +
-                       "    WHEN director IS NULL OR director = '' THEN 'Invalid or missing director' " +
-                       "    WHEN id IN ( " +
-                       "        SELECT id " +
-                       "        FROM movies_staging " +
-                       "        GROUP BY id " +
-                       "        HAVING COUNT(*) > 1" +
-                       "    ) THEN 'Duplicate in file' " +
-                       "    WHEN EXISTS ( " +
-                       "        SELECT 1 FROM movies AS M WHERE M.id = S.id " +
-                       "    ) THEN 'Movie already exists in database' " +
-                       "   END AS error " +
-                       "FROM movies_staging AS S " +
-                       "WHERE id IS NULL OR id = '' " +
-                       "OR title IS NULL OR title = '' " +
-                       "OR year IS NULL OR year = '' OR year NOT REGEXP '^[0-9]+$' " +
-                       "OR director IS NULL OR director = '' " +
-                       "OR EXISTS ( " +
-                       "    SELECT 1 FROM movies AS M WHERE M.id = S.id " +
-                       ") " +
-                       "OR id IN ( " +
+        String query = "WITH dupes AS ( " +
                        "    SELECT id " +
                        "    FROM movies_staging " +
                        "    GROUP BY id " +
                        "    HAVING COUNT(*) > 1 " +
-                       ")";
+                       ") " +
+                       "SELECT S.id, S.title, S.year, S.director, " +
+                       "CASE " +
+                       "    WHEN S.id IS NULL OR S.id = '' THEN 'Invalid or missing id' " +
+                       "    WHEN S.title IS NULL OR S.title = '' THEN 'Invalid or missing title' " +
+                       "    WHEN S.year IS NULL OR S.year = '' OR S.year NOT REGEXP '^[0-9]+$' THEN 'Invalid or missing year' " +
+                       "    WHEN S.director IS NULL OR S.director = '' THEN 'Invalid or missing director' " +
+                       "    WHEN D.id IS NOT NULL THEN 'Duplicate in file' " +
+                       "    WHEN M.id IS NOT NULL THEN 'Movie already exists in database' " +
+                       "END AS error " +
+                       "FROM movies_staging S " +
+                       "LEFT JOIN dupes AS D ON D.id = S.id " +
+                       "LEFT JOIN movies AS M ON M.id = S.id " +
+                       "WHERE S.id IS NULL OR S.id = '' " +
+                       "OR S.title IS NULL OR S.title = '' " +
+                       "OR S.year IS NULL OR S.year = '' OR S.year NOT REGEXP '^[0-9]+$' " +
+                       "OR S.director IS NULL OR S.director = '' " +
+                       "OR D.id IS NOT NULL " +
+                       "OR M.id IS NOT NULL";
 
         PreparedStatement statement = conn.prepareStatement(query);
         ResultSet rs = statement.executeQuery();
