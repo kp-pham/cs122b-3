@@ -59,12 +59,12 @@ public class MovieLoader implements DataLoader {
     }
 
     private void loadToStaging(String file) throws SQLException {
-        String query = String.format("LOAD DATA LOCAL INFILE ? " +
-                                     "INTO TABLE movies_staging " +
-                                     "FIELDS TERMINATED BY ',' " +
-                                     "ENCLOSED BY '\"' " +
-                                     "LINES TERMINATED BY '\\r\\n' " +
-                                     "IGNORE 1 ROWS", file);
+        String query = "LOAD DATA LOCAL INFILE ? " +
+                       "INTO TABLE movies_staging " +
+                       "FIELDS TERMINATED BY ',' " +
+                       "ENCLOSED BY '\"' " +
+                       "LINES TERMINATED BY '\\r\\n' " +
+                       "IGNORE 1 ROWS";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.setString(1, file);
