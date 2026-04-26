@@ -40,6 +40,14 @@ public class IngestData {
 
         System.out.println("\nLoading movie-star relationships completed.\n");
 
+
+        System.out.println("Loading movie-genre relationships...");
+
+        GenresInMoviesLoader genresInMoviesLoader = new GenresInMoviesLoader(conn);
+        genresInMoviesLoader.load("data/genres_in_movies.csv");
+
+        System.out.println("\nLoading movie-genre relationships completed.\n");
+
         conn.close();
     }
 }

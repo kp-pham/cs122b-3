@@ -57,15 +57,15 @@ public class GenresInMoviesLoader extends DataLoader {
                        "    FROM genres_in_movies_staging AS S " +
                        "    INNER JOIN deduped AS D ON D.genreId = S.genreId " +
                        "                           AND D.movieId = S.movieId " +
-                       "    WHERE S.genreId IS NOT NULL AND S.genreId != '' AND S.id REGEXP '^[0-9]+$' " +
+                       "    WHERE S.genreId IS NOT NULL AND S.genreId != '' AND S.genreId REGEXP '^[0-9]+$' " +
                        "    AND S.movieId IS NOT NULL AND S.movieID != '' " +
                        ") " +
-                       "SELECT C.id, C.name " +
+                       "SELECT C.genreId, C.movieId " +
                        "FROM cleaned AS C " +
                        "LEFT JOIN genres AS G ON G.id = C.genreId " +
-                       "LEFT JOIN movies AS M ON M.id = M.movieId " +
+                       "LEFT JOIN movies AS M ON M.id = C.movieId " +
                        "WHERE G.id IS NOT NULL " +
-                       "WHERE M.id IS NOT NULL";
+                       "AND M.id IS NOT NULL";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.executeUpdate();
@@ -84,7 +84,7 @@ public class GenresInMoviesLoader extends DataLoader {
                        "CASE " +
                        "    WHEN S.genreId IS NULL OR S.genreId = '' OR S.genreId NOT REGEXP '^[0-9]+$' THEN 'Invalid or missing genre id' " +
                        "    WHEN S.movieId IS NULL OR S.movieId = '' THEN 'Invalid or missing movie id' " +
-                       "    WHEN D.starId IS NOT NULL AND D.movieId IS NOT NULL THEN 'Duplicate in file' " +
+                       "    WHEN D.genreId IS NOT NULL AND D.movieId IS NOT NULL THEN 'Duplicate in file' " +
                        "    WHEN G.id IS NULL THEN 'Genre id references nonexistent star' " +
                        "    WHEN M.id IS NULL THEN 'Movie id references nonexistent movie' " +
                        "END AS error " +
