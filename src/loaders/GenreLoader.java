@@ -43,7 +43,28 @@ public class GenreLoader extends DataLoader {
 
     @Override
     protected void validateAndTransform() throws SQLException {
+        String query = "INSERT INTO genres (id, name) " +
+                       "WITH deduped AS ( " +
+                       "    SELECT id " +
+                       "    FROM genres_staging " +
+                       "    GROUP BY id " +
+                       "    HAVING COUNT(*) = 1 " +
+                       "), " +
+                       "cleaned AS ( " +
+                       "    SELECT S.id, S.name " +
+                       "    FROM genres_staging AS S " +
+                       "    INNER JOIN deduped AS D ON D.id = S.id " +
+                       "    WHERE S.id IS NOT NULL AND S.id != '' " +
+                       "    AND S.name IS NOT NULL AND S.name != '' " +
+                       ") " +
+                       "SELECT C.id, C.name " +
+                       "FROM cleaned AS C " +
+                       "LEFT JOIN genres AS G ON G.id = S.id " +
+                       "WHERE G.id IS NULL";
 
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.executeUpdate();
+        statement.close();
     }
 
     @Override
