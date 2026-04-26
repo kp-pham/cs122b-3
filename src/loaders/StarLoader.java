@@ -14,6 +14,5 @@ public class StarLoader implements DataLoader {
 
     @Override
     public void load(String file) throws Exception {
-
     }
 }

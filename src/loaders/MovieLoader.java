@@ -5,42 +5,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class MovieLoader implements DataLoader {
-    private final Connection conn;
-
+public class MovieLoader extends DataLoader {
     public MovieLoader(Connection conn) {
-        this.conn = conn;
+        super(conn);
     }
 
-    @Override
-    public void load(String file) throws Exception {
-        try {
-            conn.setAutoCommit(false);
-
-            createStagingTable();
-            System.out.println("Created staging table.");
-
-            loadToStaging(file);
-            System.out.println("Loaded data to staging table.");
-
-            validateAndTransform();
-            System.out.println("Loaded data to database.\n");
-
-            System.out.println("Errors reported: ");
-            reportErrors();
-
-            conn.commit();
-
-        } catch (Exception e) {
-            conn.rollback();
-            throw e;
-
-        } finally {
-            conn.setAutoCommit(true);
-        }
-    }
-
-    private void createStagingTable() throws SQLException {
+    protected void createStagingTable() throws SQLException {
         String dropQuery = "DROP TABLE IF EXISTS movies_staging";
         String createQuery = "CREATE TABLE movies_staging(" +
                              "    id TEXT, " +
@@ -58,7 +28,7 @@ public class MovieLoader implements DataLoader {
         statement.close();
     }
 
-    private void loadToStaging(String file) throws SQLException {
+    protected void loadToStaging(String file) throws SQLException {
         String query = "LOAD DATA LOCAL INFILE ? " +
                        "INTO TABLE movies_staging " +
                        "FIELDS TERMINATED BY ',' " +
@@ -73,7 +43,7 @@ public class MovieLoader implements DataLoader {
         statement.close();
     }
 
-    private void validateAndTransform() throws SQLException {
+    protected void validateAndTransform() throws SQLException {
         String query = "INSERT INTO movies (id, title, year, director, price) " +
                        "WITH deduped AS (" +
                        "   SELECT id " +
@@ -101,7 +71,7 @@ public class MovieLoader implements DataLoader {
         statement.close();
     }
 
-    private void reportErrors() throws SQLException {
+    protected void reportErrors() throws SQLException {
         String query = "WITH dupes AS ( " +
                        "    SELECT id " +
                        "    FROM movies_staging " +
