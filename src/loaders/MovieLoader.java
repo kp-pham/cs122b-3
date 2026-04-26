@@ -91,7 +91,7 @@ public class MovieLoader extends DataLoader {
                        "    WHEN D.id IS NOT NULL THEN 'Duplicate in file' " +
                        "    WHEN M.id IS NOT NULL THEN 'Movie already exists in database' " +
                        "END AS error " +
-                       "FROM movies_staging S " +
+                       "FROM movies_staging AS S " +
                        "LEFT JOIN dupes AS D ON D.id = S.id " +
                        "LEFT JOIN movies AS M ON M.id = S.id " +
                        "WHERE S.id IS NULL OR S.id = '' " +
