@@ -11,7 +11,7 @@ public class GenreLoader extends DataLoader {
     @Override
     protected void createStagingTable() throws SQLException {
         String dropQuery = "DROP TABLE IF EXISTS genres_staging";
-        String createQuery = "CREATE TABLE stars_staging( " +
+        String createQuery = "CREATE TABLE genres_staging( " +
                              "    id TEXT, " +
                              "    name TEXT " +
                              ")";
@@ -51,7 +51,7 @@ public class GenreLoader extends DataLoader {
                        "    HAVING COUNT(*) = 1 " +
                        "), " +
                        "cleaned AS ( " +
-                       "    SELECT S.id, S.name " +
+                       "    SELECT CAST(S.id AS UNSIGNED) AS id, S.name " +
                        "    FROM genres_staging AS S " +
                        "    INNER JOIN deduped AS D ON D.id = S.id " +
                        "    WHERE S.id IS NOT NULL AND S.id != '' AND S.id REGEXP '^[0-9]+$' " +
@@ -59,7 +59,7 @@ public class GenreLoader extends DataLoader {
                        ") " +
                        "SELECT C.id, C.name " +
                        "FROM cleaned AS C " +
-                       "LEFT JOIN genres AS G ON G.id = S.id " +
+                       "LEFT JOIN genres AS G ON G.id = C.id " +
                        "WHERE G.id IS NULL";
 
         PreparedStatement statement = conn.prepareStatement(query);
@@ -69,16 +69,18 @@ public class GenreLoader extends DataLoader {
 
     @Override
     protected void reportErrors() throws SQLException {
-        String query = "WITH query AS ( " +
+        String query = "WITH dupes AS ( " +
                        "    SELECT id " +
                        "    FROM genres_staging " +
                        "    GROUP BY id " +
                        "    HAVING COUNT(*) > 1 " +
                        ") " +
-                       "SELECT S.id, S.name " +
+                       "SELECT S.id, S.name, " +
                        "CASE " +
                        "    WHEN S.id IS NULL OR S.id = '' OR S.id NOT REGEXP '^[0-9]+$' THEN 'Invalid or missing id' " +
                        "    WHEN S.name IS NULL OR S.name = '' THEN 'Invalid or missing name' " +
+                       "    WHEN D.id IS NOT NULL THEN 'Duplicate in file' " +
+                       "    WHEN G.id IS NOT NULl THEN 'Genre already exists in database' " +
                        "END AS error " +
                        "FROM genres_staging AS S " +
                        "LEFT JOIN dupes AS D ON D.id = S.id " +
