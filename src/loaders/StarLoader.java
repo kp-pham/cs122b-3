@@ -45,7 +45,28 @@ public class StarLoader extends DataLoader {
 
     @Override
     protected void validateAndTransform() throws SQLException {
+        String query = "INSERT INTO stars (id, name, birthYear) " +
+                       "WITH deduped AS (" +
+                       "    SELECT id " +
+                       "    FROM stars_staging " +
+                       "    GROUP BY id " +
+                       "    HAVING COUNT(*) = 1 " +
+                       "), " +
+                       "cleaned AS ( " +
+                       "    SELECT S.id, S.name " +
+                       "    FROM stars_staging AS S " +
+                       "    INNER JOIN deduped AS D ON D.id = S.id " +
+                       "    WHERE S.id IS NOT NULL AND S.id != '' " +
+                       "    AND S.name IS NOT NULL AND S.name != '' " +
+                       ") " +
+                       "SELECT C.id, C.name, NULL " +
+                       "FROM cleaned AS C " +
+                       "LEFT JOIN stars AS S ON C.id = S.id " +
+                       "WHERE S.id IS NULL";
 
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.executeUpdate();
+        statement.close();
     }
 
     @Override
