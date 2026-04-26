@@ -29,7 +29,18 @@ public class GenresInMoviesLoader extends DataLoader {
 
     @Override
     protected void loadToStaging(String file) throws SQLException {
+        String query = "LOAD DATA LOCAL INFILE ? " +
+                       "INTO TABLE genres_in_movies_staging " +
+                       "FIELDS TERMINATED BY ',' " +
+                       "ENCLOSED BY '\"' " +
+                       "LINES TERMINATED BY '\\r\\n' " +
+                       "IGNORE 1 ROWS";
 
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.setString(1, file);
+
+        statement.executeUpdate();
+        statement.close();
     }
 
     @Override
