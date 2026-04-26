@@ -47,7 +47,7 @@ public class StarLoader extends DataLoader {
     @Override
     protected void validateAndTransform() throws SQLException {
         String query = "INSERT INTO stars (id, name, birthYear) " +
-                       "WITH deduped AS (" +
+                       "WITH deduped AS ( " +
                        "    SELECT id " +
                        "    FROM stars_staging " +
                        "    GROUP BY id " +
@@ -56,9 +56,9 @@ public class StarLoader extends DataLoader {
                        "cleaned AS ( " +
                        "    SELECT S.id, S.name, " +
                        "    CASE " +
-                       "        WHEN S.birthyear REGEXP '^[0-9]+$' THEN CAST (S.birthYear AS UNSIGNED) " +
+                       "        WHEN S.birthyear IS NOT NULL AND S.birthYear != '' AND S.birthYear REGEXP '^[0-9]+$' THEN CAST(S.birthYear AS UNSIGNED) " +
                        "        ELSE NULL " +
-                       "    END birthYear " +
+                       "    END AS birthYear " +
                        "    FROM stars_staging AS S " +
                        "    INNER JOIN deduped AS D ON D.id = S.id " +
                        "    WHERE S.id IS NOT NULL AND S.id != '' " +
@@ -82,7 +82,7 @@ public class StarLoader extends DataLoader {
                        "    GROUP BY id " +
                        "    HAVING COUNT(*) > 1 " +
                        ") " +
-                       "SELECT S.id, S.name " +
+                       "SELECT S.id, S.name, S.birthYear " +
                        "CASE " +
                        "    WHEN S.id IS NULL OR S.id = '' THEN 'Invalid or missing id' " +
                        "    WHEN S.name IS NULL OR S.name = '' THEN 'Invalid or missing name' " +
