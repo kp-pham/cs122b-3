@@ -63,8 +63,8 @@ public class StarsInMoviesLoader extends DataLoader {
                        "FROM cleaned AS C " +
                        "LEFT JOIN stars AS S ON S.id = C.starId " +
                        "LEFT JOIN movies AS M ON M.id = C.movieId " +
-                       "WHERE S.id IS NULL " +
-                       "WHERE M.id IS NULL";
+                       "WHERE S.id IS NOT NULL " +
+                       "WHERE M.id IS NOT NULL";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.executeUpdate();
