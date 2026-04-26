@@ -69,6 +69,37 @@ public class GenreLoader extends DataLoader {
 
     @Override
     protected void reportErrors() throws SQLException {
+        String query = "WITH query AS ( " +
+                       "    SELECT id " +
+                       "    FROM genres_staging " +
+                       "    GROUP BY id " +
+                       "    HAVING COUNT(*) > 1 " +
+                       ") " +
+                       "SELECT S.id, S.name " +
+                       "CASE " +
+                       "    WHEN S.id IS NULL OR S.id = '' THEN 'Invalid or missing id' " +
+                       "    WHEN S.name IS NULL OR S.name = '' THEN 'Invalid or missing name' " +
+                       "END AS error " +
+                       "FROM genres_staging AS S " +
+                       "LEFT JOIN dupes AS D ON D.id = S.id " +
+                       "LEFT JOIN genres AS G ON G.id = S.id " +
+                       "WHERE S.id IS NULL OR S.id = '' " +
+                       "OR S.name IS NULL OR S.name = '' " +
+                       "OR D.id IS NOT NULL " +
+                       "OR G.id IS NOT NULL";
 
+        PreparedStatement statement = conn.prepareStatement(query);
+        ResultSet rs = statement.executeQuery();
+
+        while (rs.next()) {
+            System.out.printf("%s: %s, %s%n",
+                              rs.getString("error"),
+                              rs.getString("id"),
+                              rs.getString("name")
+            );
+        }
+
+        rs.close();
+        statement.close();
     }
 }
