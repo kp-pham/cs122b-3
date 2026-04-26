@@ -45,7 +45,31 @@ public class GenresInMoviesLoader extends DataLoader {
 
     @Override
     protected void validateAndTransform() throws SQLException {
+        String query = "INSERT INTO genres_in_movies (genreId, movieId) " +
+                       "WITH deduped AS ( " +
+                       "    SELECT genreId, movieId " +
+                       "    FROM genres_in_movies_staging " +
+                       "    GROUP BY genreId, movieId " +
+                       "    HAVING COUNT(*) = 1 " +
+                       "), " +
+                       "cleaned AS ( " +
+                       "    SELECT CAST(S.genreId AS UNSIGNED) AS genreId, S.movieId " +
+                       "    FROM genres_in_movies_staging AS S " +
+                       "    INNER JOIN deduped AS D ON D.genreId = S.genreId " +
+                       "                           AND D.movieId = S.movieId " +
+                       "    WHERE S.genreId IS NOT NULL AND S.genreId != '' AND S.id REGEXP '^[0-9]+$' " +
+                       "    AND S.movieId IS NOT NULL AND S.movieID != '' " +
+                       ") " +
+                       "SELECT C.id, C.name " +
+                       "FROM cleaned AS C " +
+                       "LEFT JOIN genres AS G ON G.id = C.genreId " +
+                       "LEFT JOIN movies AS M ON M.id = M.movieId " +
+                       "WHERE G.id IS NOT NULL " +
+                       "WHERE M.id IS NOT NULL";
 
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.executeUpdate();
+        statement.close();
     }
 
     @Override
