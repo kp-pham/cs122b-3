@@ -15,7 +15,7 @@ public class StarLoader extends DataLoader {
         String dropQuery = "DROP TABLE IF EXISTS stars_staging";
         String createQuery = "CREATE TABLE stars_staging( " +
                              "    id TEXT, " +
-                             "    name TEXT " +
+                             "    name TEXT, " +
                              "    birthYear TEXT " +
                              ")";
 
@@ -54,13 +54,17 @@ public class StarLoader extends DataLoader {
                        "    HAVING COUNT(*) = 1 " +
                        "), " +
                        "cleaned AS ( " +
-                       "    SELECT S.id, S.name " +
+                       "    SELECT S.id, S.name, " +
+                       "    CASE " +
+                       "        WHEN S.birthyear REGEXP '^[0-9]+$' THEN CAST (S.birthYear AS UNSIGNED) " +
+                       "        ELSE NULL " +
+                       "    END birthYear " +
                        "    FROM stars_staging AS S " +
                        "    INNER JOIN deduped AS D ON D.id = S.id " +
                        "    WHERE S.id IS NOT NULL AND S.id != '' " +
                        "    AND S.name IS NOT NULL AND S.name != '' " +
                        ") " +
-                       "SELECT C.id, C.name, NULL " +
+                       "SELECT C.id, C.name, C.birthYear " +
                        "FROM cleaned AS C " +
                        "LEFT JOIN stars AS S ON C.id = S.id " +
                        "WHERE S.id IS NULL";
