@@ -76,7 +76,7 @@ public class GenresInMoviesLoader extends DataLoader {
     protected void reportErrors() throws SQLException {
         String query = "WITH dupes AS ( " +
                        "    SELECT genreId, movieId " +
-                       "    FROM genres_in_movies AS S " +
+                       "    FROM genres_in_movies_staging AS S " +
                        "    GROUP BY genreId, movieId " +
                        "    HAVING COUNT(*) > 1 " +
                        ") " +
@@ -111,6 +111,15 @@ public class GenresInMoviesLoader extends DataLoader {
         }
 
         rs.close();
+        statement.close();
+    }
+
+    @Override
+    protected void deleteStagingTable() throws SQLException {
+        String query = "DROP TABLE IF EXISTS genres_in_movies_staging";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.executeUpdate();
         statement.close();
     }
 }

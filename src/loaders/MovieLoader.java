@@ -117,4 +117,13 @@ public class MovieLoader extends DataLoader {
         rs.close();
         statement.close();
     }
+
+    @Override
+    protected void deleteStagingTable() throws SQLException {
+        String query = "DROP TABLE IF EXISTS movies_staging";
+
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.executeUpdate();
+        statement.close();
+    }
 }
