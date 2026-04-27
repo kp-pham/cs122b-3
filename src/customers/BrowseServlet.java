@@ -113,13 +113,19 @@ public class BrowseServlet extends HttpServlet {
 
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
-                           "CONCAT('[', " +
-                           "       GROUP_CONCAT(DISTINCT JSON_QUOTE(G.name) ORDER BY G.name ASC SEPARATOR ','), " +
-                           "       ']') AS genres, " +
-                           "CONCAT('[', " +
-                           "       GROUP_CONCAT(DISTINCT CASE WHEN S.id IS NOT NULL THEN JSON_OBJECT('id', S.id, 'name', S.name) END " +
-                           "                    ORDER BY S.movie_count DESC, S.name ASC), " +
-                           "       ']') AS stars " +
+                           "IFNULL( " +
+                           "    CONCAT('[', " +
+                           "           GROUP_CONCAT(DISTINCT JSON_QUOTE(G.name) ORDER BY G.name ASC), " +
+                           "           ']'), " +
+                           "    '[]' " +
+                           ") AS genres, " +
+                           "IFNULL(" +
+                           "    CONCAT('[', " +
+                           "           GROUP_CONCAT(DISTINCT CASE WHEN S.id IS NOT NULL THEN JSON_OBJECT('id', S.id, 'name', S.name) END " +
+                           "                        ORDER BY S.movie_count DESC, S.name ASC), " +
+                           "           ']'), " +
+                           "    '[]' " +
+                           ") AS stars " +
                            "FROM movies AS M " +
                            "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
@@ -138,7 +144,7 @@ public class BrowseServlet extends HttpServlet {
                 query += "WHERE EXISTS ( " +
                         "    SELECT 1 " +
                         "    FROM genres_in_movies AS GIM " +
-                        "    LEFT JOIN genres AS G ON GIM.genreId = G.id " +
+                        "    INNER JOIN genres AS G ON GIM.genreId = G.id " +
                         "    WHERE GIM.movieId = M.id" +
                         "    AND G.name = ? " +
                         ") ";
