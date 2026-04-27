@@ -112,29 +112,53 @@ public class BrowseServlet extends HttpServlet {
         int offset = (pageNumber - 1) * pageSize;
 
         try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
-                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name ORDER BY G.name ASC SEPARATOR ', '), ']') AS genres, " +
-                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name) ORDER BY S.movie_count DESC, S.name ASC), ']') AS stars " +
-                           "FROM movies AS M " +
-                           "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
-                           "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
-                           "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
-                           "LEFT JOIN (" +
+            String query = "WITH genre_data AS ( " +
+                           "    SELECT DISTINCT GIM.movieId, G.name " +
+                           "    FROM genres_in_movies AS GIM " +
+                           "    INNER JOIN genres AS G ON GIM.genreId = g.id " +
+                           "    ORDER BY G.name ASC " +
+                           "), " +
+                           "star_movie_counts AS ( " +
                            "    SELECT S.id, S.name, COUNT(SIM.movieId) AS movie_count " +
+                           "    FROM stars AS S " +
+                           "    INNER JOIN stars_in_movies AS SIM ON S.id = SIM.starId " +
+                           "    GROUP BY S.id, S.name " +
+                           "), " +
+                           "star_data AS ( " +
+                           "    SELECT DISTINCT SIM.movieId, S.id, S.name, S.movie_count " +
                            "    FROM stars_in_movies AS SIM " +
-                           "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
-                           "    GROUP BY S.id " +
-                           ") AS S ON SIM.starId = S.id " +
-                           "LEFT JOIN ratings AS R ON R.movieId = M.id ";
+                           "    INNER JOIN star_movie_counts AS S ON SIM.starId = S.id " +
+                           "    ORDER BY S.movie_count DESC, S.name ASC " +
+                           ") " +
+                           "SELECT M.id, M.title, M.year, M.director, R.rating, " +
+                           "       JSON_ARRAYAGG(G.name) AS genres, " +
+                           "       JSON_ARRAYAGG(JSON_OBJECT('id', S.id, 'name', S.name)) AS stars " +
+                           "FROM movies AS M " +
+                           "LEFT JOIN genre_data AS G ON M.id = G.movieId " +
+                           "LEFT JOIN star_data AS S ON M.id = S.movieId " +
+                           "LEFT JOIN ratings AS R ON M.id = R.movieId ";
+//            String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
+//                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name ORDER BY G.name ASC SEPARATOR ', '), ']') AS genres, " +
+//                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name) ORDER BY S.movie_count DESC, S.name ASC), ']') AS stars " +
+//                           "FROM movies AS M " +
+//                           "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
+//                           "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
+//                           "LEFT JOIN stars_in_movies AS SIM ON M.id = SIM.movieId " +
+//                           "LEFT JOIN (" +
+//                           "    SELECT S.id, S.name, COUNT(SIM.movieId) AS movie_count " +
+//                           "    FROM stars_in_movies AS SIM " +
+//                           "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
+//                           "    GROUP BY S.id " +
+//                           ") AS S ON SIM.starId = S.id " +
+//                           "LEFT JOIN ratings AS R ON R.movieId = M.id ";
 
             List<Object> params = new ArrayList<>();
 
             if (hasGenre) {
                 query += "WHERE EXISTS ( " +
                          "    SELECT 1 " +
-                         "    FROM genres_in_movies AS GIM " +
-                         "    LEFT JOIN genres AS G ON GIM.genreId = G.id " +
-                         "    WHERE GIM.movieId = M.id" +
+                         "    FROM genre_data AS G " +
+                         "    WHERE M.id = G.movieId " +
                          "    AND G.name = ? " +
                          ") ";
                 params.add(trimmedGenre);
