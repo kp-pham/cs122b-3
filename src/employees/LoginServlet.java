@@ -74,7 +74,7 @@ public class LoginServlet extends HttpServlet {
 
             if (rs.next() && passwordEncryptor.checkPassword(password, rs.getString("password"))) {
                 String fullName = rs.getString("fullName");
-                request.getSession().setAttribute("customer", new Employee(fullName, email));
+                request.getSession().setAttribute("employee", new Employee(fullName, email));
                 jsonObject.addProperty("status", "success");
                 jsonObject.addProperty("message", "success");
                 response.setStatus(200);

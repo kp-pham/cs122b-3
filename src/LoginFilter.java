@@ -20,7 +20,9 @@ public class LoginFilter implements Filter {
             return;
         }
 
-        if (httpRequest.getSession().getAttribute("customer") == null) {
+        if (isEmployeeOnly(httpRequest.getContextPath()) && httpRequest.getSession().getAttribute("employee") == null) {
+            httpResponse.sendRedirect("_dashboard/login.html");
+        } else if (httpRequest.getSession().getAttribute("customer") == null) {
             httpResponse.sendRedirect("login.html");
         } else {
             chain.doFilter(request, response);
@@ -29,6 +31,10 @@ public class LoginFilter implements Filter {
 
     private boolean isUrlAllowedWithoutLogin(String requestURI) {
         return allowedURIs.stream().anyMatch(requestURI.toLowerCase()::endsWith);
+    }
+
+    private boolean isEmployeeOnly(String contextPath) {
+        return contextPath.startsWith("/_dashboard") || contextPath.startsWith("/api/employees");
     }
 
     public void init(FilterConfig fConfig) {
