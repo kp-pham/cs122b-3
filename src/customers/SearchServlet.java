@@ -119,8 +119,19 @@ public class SearchServlet extends HttpServlet {
 
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT M.id, M.title, M.year, M.director, R.rating, " +
-                           "CONCAT('[', GROUP_CONCAT(DISTINCT G.name ORDER BY G.name ASC SEPARATOR ', '), ']') AS genres, " +
-                           "CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', S.id, 'name', S.name) ORDER BY S.movie_count DESC, S.name ASC), ']') AS stars " +
+                           "IFNULL( " +
+                           "    CONCAT('[', " +
+                           "           GROUP_CONCAT(DISTINCT JSON_QUOTE(G.name) ORDER BY G.name ASC), " +
+                           "           ']'), " +
+                           "    '[]' " +
+                           ") AS genres, " +
+                           "IFNULL( " +
+                           "    CONCAT('[', " +
+                           "           GROUP_CONCAT(DISTINCT CASE WHEN S.id IS NOT NULL THEN JSON_OBJECT('id', S.id, 'name', S.name) END " +
+                           "                        ORDER BY S.movie_count DESC, S.name ASC), " +
+                           "           ']'), " +
+                           "    '[]' " +
+                           ") AS stars " +
                            "FROM movies AS M " +
                            "LEFT JOIN genres_in_movies AS GIM ON M.id = GIM.movieId " +
                            "LEFT JOIN genres AS G ON GIM.genreId = G.id " +
@@ -155,7 +166,7 @@ public class SearchServlet extends HttpServlet {
                 query += "AND EXISTS (" +
                          "    SELECT 1 " +
                          "    FROM stars_in_movies AS SIM " +
-                         "    LEFT JOIN stars AS S ON SIM.starId = S.id " +
+                         "    INNER JOIN stars AS S ON SIM.starId = S.id " +
                          "    WHERE SIM.movieId = M.id " +
                          "    AND S.name LIKE ? " +
                          ") ";
