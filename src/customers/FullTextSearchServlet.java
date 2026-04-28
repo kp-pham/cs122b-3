@@ -177,13 +177,19 @@ public class FullTextSearchServlet extends HttpServlet {
 
             StringBuilder logicalOperators = new StringBuilder();
 
-            for (String token : tokens) {
+            for (int i = 0; i < tokens.length; ++i) {
                 logicalOperators.append("+")
-                                .append(token)
+                                .append(tokens[i])
                                 .append("*");
+
+                if (i < tokens.length - 1) {
+                    logicalOperators.append(" ");
+                }
             }
 
             String entry = logicalOperators.toString();
+
+            System.out.println("[" + entry + "]");
 
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, entry);
