@@ -36,7 +36,13 @@ public class MovieLoader extends DataLoader {
                        "FIELDS TERMINATED BY ',' " +
                        "ENCLOSED BY '\"' " +
                        "LINES TERMINATED BY '\\n' " +
-                       "IGNORE 1 ROWS";
+                       "IGNORE 1 ROWS " +
+                       "(@id, @title, @year, @director) " +
+                       "SET " +
+                       "    id = TRIM(@id), " +
+                       "    title = TRIM(@title), " +
+                       "    year = TRIM(@year), " +
+                       "    director = TRIM(@director)";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.setString(1, file);

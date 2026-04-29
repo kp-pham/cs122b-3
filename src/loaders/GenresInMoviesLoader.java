@@ -34,7 +34,11 @@ public class GenresInMoviesLoader extends DataLoader {
                        "FIELDS TERMINATED BY ',' " +
                        "ENCLOSED BY '\"' " +
                        "LINES TERMINATED BY '\\n' " +
-                       "IGNORE 1 ROWS";
+                       "IGNORE 1 ROWS " +
+                       "(@genreId, @movieId) " +
+                       "SET " +
+                       "    genreId = TRIM(@genreId), " +
+                       "    movieId = TRIM(@movieId)";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.setString(1, file);

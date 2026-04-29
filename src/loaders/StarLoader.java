@@ -35,7 +35,12 @@ public class StarLoader extends DataLoader {
                        "FIELDS TERMINATED BY ',' " +
                        "ENCLOSED BY '\"' " +
                        "LINES TERMINATED BY '\\n' " +
-                       "IGNORE 1 ROWS";
+                       "IGNORE 1 ROWS " +
+                       "(@id, @name, @birthYear) " +
+                       "SET " +
+                       "    id = TRIM(@id), " +
+                       "    name = TRIM(@name), " +
+                       "    birthYear = TRIM(@birthYear)";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.setString(1, file);

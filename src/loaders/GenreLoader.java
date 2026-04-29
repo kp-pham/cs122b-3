@@ -32,7 +32,11 @@ public class GenreLoader extends DataLoader {
                        "FIELDS TERMINATED BY ',' " +
                        "ENCLOSED BY '\"' " +
                        "LINES TERMINATED BY '\\n' " +
-                       "IGNORE 1 ROWS";
+                       "IGNORE 1 ROWS " +
+                       "(@id, @name) " +
+                       "SET " +
+                       "    id = TRIM(@id), " +
+                       "    name = TRIM(@name)";
 
         PreparedStatement statement = conn.prepareStatement(query);
         statement.setString(1, file);
